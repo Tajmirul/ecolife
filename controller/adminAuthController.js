@@ -1,0 +1,99 @@
+const bcrypt = require('bcrypt');
+const { errorValidation } = require('../utils/error-validation');
+const { throwError } = require('../utils/throwError');
+const User = require('../models/UserModel');
+
+module.exports.getSignin = async (req, res, next) => {
+    try {
+        res.render('admin/layouts/layout-small', {
+            title: 'Log in to Ecolife as an admin',
+            page: 'auth/signin',
+            path: '/auth/signin',
+
+            data: {},
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports.postSignin = async (req, res, next) => {
+    try {
+        errorValidation(req);
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+        const passwordMatched = await bcrypt.compare(password, user.password);
+        if (passwordMatched && user.isAdmin && user.isActive) {
+            req.session.isLoggedIn = true;
+            req.session.user = user;
+            await req.session.save((err) => {
+                if (err) {
+                    console.log(err);
+                }
+                res.status(200).json({ message: 'sign in successful' });
+            });
+        } else {
+            throwError('Credentials do not match', 422, true);
+        }
+    } catch (err) {
+        next(err);
+    }
+    return null;
+};
+
+module.exports.getSignup = (req, res, next) => {
+    try {
+        res.render('admin/layouts/layout-small', {
+            title: 'Join to Ecolife as an admin',
+            page: 'auth/signup',
+            path: '/signup',
+
+            data: {},
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports.postSignup = async (req, res, next) => {
+    try {
+        errorValidation(req);
+
+        const {
+            firstName, lastName, userName, phone, email, password,
+        } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new User({
+            firstName,
+            lastName,
+            email,
+            phone,
+            password: hashedPassword,
+            userName,
+            isActive: false,
+            isSuperAdmin: false,
+            isAdmin: true,
+        });
+        try {
+            await newUser.save();
+        } catch (err) {
+            console.log(err);
+            throwError('Unable to save user', 500, true);
+        }
+
+        res.status(200).json({ message: 'Account created successfully.' });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports.postLogout = async (req, res, next) => {
+    try {
+        await req.session.destroy();
+        res.redirect(`${process.env.ADMIN_PANEL_PATH}/auth/signin`);
+    } catch (err) {
+        next(err);
+    }
+};

@@ -1,0 +1,118 @@
+<!--begin::List Widget 5-->
+<div class="card card-xxl-stretch mb-8">
+    <!--begin::Header-->
+    <div class="card-header align-items-center border-2 mt-4">
+        <h3 class="card-title align-items-start flex-column">
+            <span class="fw-bolder mb-2 text-dark"><%= data.editMode ? 'Edit' : 'Add' %> Category</span>
+        </h3>
+    </div>
+    <!--end::Header-->
+    <!--begin::Body-->
+    <div class="card-body pt-5">
+        <form id="add-category-form" action="<%= `/${process.env.ADMIN_PANEL_PATH}/category/${data.editMode ? 'edit' : 'add'}` %>">
+            <div class="row">
+                <div class="col-md-6 col-lg-5">
+                    <% if (data.editMode) { %>
+                        <input type="hidden" name="categoryId" value="<%= data.category._id %>">
+                    <% } %>
+                    <div class="fv-row mb-5">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control form-control-solid" placeholder="Name" name="name"
+                            value="<%= data.category?.name %>" />
+                    </div>
+
+                    <div class="fv-row mb-5">
+                        <label class="form-label">Label of Category</label>
+                        <select name="label" class="form-select form-select-solid" data-control="select2"
+                            data-hide-search="true" id="category-label">
+                            <option <%= data.category?.label === 'main' && 'selected' %> value="main">Main Category</option>
+                            <option <%= data.category?.label === 'sub' && 'selected' %> value="sub">Sub Category</option>
+                            <option <%= data.category?.label === 'pro-sub' && 'selected' %> value="pro-sub">Pro-sub Category</option>
+                        </select>
+                    </div>
+
+                    <div class="fv-row mb-5 <% !data.category && 'd-none'%>">
+                        <label class="form-label">Parent</label>
+                        <select name="parent" class="form-select form-select-solid" data-control="select2"
+                            >
+                            <option value="" selected="false">Select Parent</option>
+                            <% if (data.parents?.length > 0) { %>
+                                <% data.parents?.forEach(item => { %>
+                                    <option value="<%= item._id %>" <%= item._id.toString() === data.category.parent._id.toString() && 'selected' %>><%= item.name %></option>
+                                    
+                                <% }) %>
+                            <% } else { %>
+                            <% } %>
+                        </select>
+                    </div>
+
+                    <div class="form-check form-check-custom form-check-solid fv-row mb-5">
+                        <input class="form-check-input" type="checkbox" value="" id="featuredCategory"/>
+                        <label class="form-check-label" for="featuredCategory">
+                            Featured Category
+                        </label>
+                    </div>
+
+                    <div class="form-check form-check-custom form-check-solid fv-row mb-5">
+                        Category Image Size
+
+                        <input name="size" class="form-check-input" type="radio" value="" id="small" />
+                        <label class="form-check-label" for="flexRadioDefault">Small</label>
+
+                        <input name="size" class="form-check-input" type="radio" value="" id="large" />
+                        <label class="form-check-label" for="flexRadioDefault">Small</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <div class="indicator-label">
+                            Add Category
+                        </div>
+                        <div class="indicator-progress">
+                            Submitting... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="fv-row mb-5">
+                        <label class="form-label">Extra Large (800x800)</label>
+                        <!--begin::Image input-->
+                        <div class="image-input image-input-empty w-100" data-kt-image-input="true"
+                            style="background-image: linear-gradient(to right, #009ef7ab, #00f7e0);background-position: center;background-size: cover;">
+                            <!--begin::Image preview wrapper-->
+                            <div class="h-200px image-input-wrapper w-100"
+                                style="background-size: contain; background-position: center;"></div>
+                            <!--end::Image preview wrapper-->
+
+                            <!--begin::Edit button-->
+                            <label
+                                class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-white shadow"
+                                data-kt-image-input-action="change" data-bs-toggle="tooltip" data-bs-dismiss="click"
+                                title="Change avatar">
+                                <i class="bi bi-pencil-fill fs-7"></i>
+
+                                <!--begin::Inputs-->
+                                <input type="file" name="image" accept="image/*" />
+                                <input type="hidden" name="avatar_remove" />
+                                <!--end::Inputs-->
+                            </label>
+                            <!--end::Edit button-->
+
+                            <!--begin::Remove button-->
+                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-white shadow"
+                                data-kt-image-input-action="remove" data-bs-toggle="tooltip" data-bs-dismiss="click"
+                                title="Remove avatar">
+                                <i class="bi bi-x fs-2"></i>
+                            </span>
+                            <!--end::Remove button-->
+                        </div>
+                        <!--end::Image input-->
+                        <span>Max image size is 2 MB</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!--end: Card Body-->
+</div>
+<!--end: List Widget 5-->

@@ -1,0 +1,10 @@
+# folders
+node_modules
+
+
+# files
+.env
+.env.production
+public/uploads/*
+package-lock.json
+yarn-lock.json
