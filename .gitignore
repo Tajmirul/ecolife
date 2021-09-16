@@ -1,5 +1,7 @@
 # folders
 node_modules
+public/uploads
+public/frontend/assets/images
 
 
 # files
@@ -7,4 +9,4 @@ node_modules
 .env.production
 public/uploads/*
 package-lock.json
-yarn-lock.json
+yarn.lock

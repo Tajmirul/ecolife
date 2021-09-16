@@ -7,6 +7,7 @@ const Banner = require('../models/bannerModel');
 const Product = require('../models/productModel');
 const User = require('../models/UserModel');
 const Category = require('../models/categoryModel');
+const Ad = require('../models/adModel');
 
 const { productImageResize } = require('../utils/imageResize');
 
@@ -58,24 +59,6 @@ module.exports.getCategories = async (req, res, next) => {
     return null;
 };
 
-module.exports.getAddCategory = async (req, res, next) => {
-    try {
-        const categories = await Category.find();
-
-        return res.render('admin/layouts/layout', {
-            title: 'Add Category - Ecolife',
-            page: 'pages/edit-category',
-            path: `/${process.env.ADMIN_PANEL_PATH}/category/add`,
-            user: req.user,
-
-            data: { categories },
-        });
-    } catch (err) {
-        next(err);
-    }
-    return null;
-};
-
 module.exports.getCategoryLabel = async (req, res, next) => {
     try {
         const { label } = req.body;
@@ -93,6 +76,24 @@ module.exports.getCategoryLabel = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+};
+
+module.exports.getAddCategory = async (req, res, next) => {
+    try {
+        const categories = await Category.find();
+
+        return res.render('admin/layouts/layout', {
+            title: 'Add Category - Ecolife',
+            page: 'pages/edit-category',
+            path: `/${process.env.ADMIN_PANEL_PATH}/category/add`,
+            user: req.user,
+
+            data: { categories },
+        });
+    } catch (err) {
+        next(err);
+    }
+    return null;
 };
 
 module.exports.postAddCategory = async (req, res, next) => {
@@ -236,10 +237,6 @@ module.exports.postAddBanner = async (req, res, next) => {
         errorValidation(req);
         const { heading, text, productCategory } = req.body;
 
-        // const url = req.file.path.replace(/\\/g, '/');
-        // console.log(url);
-        // return res.send('ok');
-
         // check if banner is already exists
         const bannerExists = await Banner.findOne({ heading });
         if (bannerExists) {
@@ -360,4 +357,90 @@ module.exports.postAddProduct = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+};
+
+module.exports.getAds = async (req, res, next) => {
+    try {
+        const ads = await Ad.find().sort({ createdAt: -1 });
+
+        res.render('admin/layouts/layout', {
+            title: 'All Products - Ecolife',
+            page: 'pages/ads',
+            path: `/${process.env.ADMIN_PANEL_PATH}/ad`,
+            user: req.user,
+
+            data: { ads },
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports.getAddAd = async (req, res, next) => {
+    try {
+        errorValidation(req);
+        const categories = await Category.find();
+
+        res.render('admin/layouts/layout', {
+            title: 'Add New Advertisement - Ecolife',
+            page: 'pages/ads',
+            path: `/${process.env.ADMIN_PANEL_PATH}/ad/add`,
+            user: req.user,
+
+            data: {
+                editMode: false,
+                categories,
+            },
+        });
+    } catch (err) {
+        next(err);
+    }
+    return null;
+};
+
+module.exports.postAddAd = async (req, res, next) => {
+    try {
+        errorValidation(req);
+
+        const { slug, imageSize } = req.body;
+        const image = req.file.path.replace(/\\/g, '/');
+
+        const ad = new Ad({ slug, imageSize, image });
+        try {
+            await ad.save();
+        } catch (err) {
+            console.log(err);
+            throwError('Unable to save', 500, true);
+        }
+
+        return res.json({ message: 'Advertisement Saved' });
+    } catch (err) {
+        next(err);
+    }
+    return null;
+};
+
+module.exports.getEditAd = async (req, res, next) => {
+    try {
+        errorValidation(req);
+        const { adId } = req.query;
+        const categories = await Category.find();
+        const ad = await Ad.findById(adId);
+
+        res.render('admin/layouts/layout', {
+            title: 'Add New Advertisement - Ecolife',
+            page: 'pages/ads',
+            path: `/${process.env.ADMIN_PANEL_PATH}/ad/add`,
+            user: req.user,
+
+            data: {
+                editMode: true,
+                categories,
+                ad,
+            },
+        });
+    } catch (err) {
+        next(err);
+    }
+    return null;
 };

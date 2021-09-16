@@ -6,7 +6,7 @@ const categorySchema = mongoose.Schema({
     image: { type: String },
     label: { type: String, required: true }, // one of 'main', 'sub', 'pro-sub'
     parent: { type: String },
-    isFeatured: { type: Boolean, required: true },
+    isFeatured: { type: Boolean, required: true, default: false },
     imageSize: { type: String }, // large || small
 }, { timestamps: true });
 

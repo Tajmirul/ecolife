@@ -41,26 +41,24 @@
                                     <option value="<%= item._id %>" <%= item._id.toString() === data.category.parent._id.toString() && 'selected' %>><%= item.name %></option>
                                     
                                 <% }) %>
-                            <% } else { %>
                             <% } %>
                         </select>
                     </div>
 
                     <div class="form-check form-check-custom form-check-solid fv-row mb-5">
-                        <input class="form-check-input" type="checkbox" value="" id="featuredCategory"/>
+                        <input class="form-check-input" type="checkbox" name="featuredCategory" id="featuredCategory"/>
                         <label class="form-check-label" for="featuredCategory">
                             Featured Category
                         </label>
                     </div>
 
-                    <div class="form-check form-check-custom form-check-solid fv-row mb-5">
-                        Category Image Size
+                    <div class="form-check form-check-custom form-check-solid fv-row mb-5 d-none" id="category-image-size">
 
-                        <input name="size" class="form-check-input" type="radio" value="" id="small" />
-                        <label class="form-check-label" for="flexRadioDefault">Small</label>
+                        <input name="size" class="form-check-input" type="radio" id="small" value="small" />
+                        <label class="form-check-label me-4" for="small">Small</label>
 
-                        <input name="size" class="form-check-input" type="radio" value="" id="large" />
-                        <label class="form-check-label" for="flexRadioDefault">Small</label>
+                        <input name="size" class="form-check-input" type="radio" id="large" value="large" />
+                        <label class="form-check-label" for="large">Large</label>
                     </div>
 
                     <button type="submit" class="btn btn-primary">
@@ -71,44 +69,6 @@
                             Submitting... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                         </div>
                     </button>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="fv-row mb-5">
-                        <label class="form-label">Extra Large (800x800)</label>
-                        <!--begin::Image input-->
-                        <div class="image-input image-input-empty w-100" data-kt-image-input="true"
-                            style="background-image: linear-gradient(to right, #009ef7ab, #00f7e0);background-position: center;background-size: cover;">
-                            <!--begin::Image preview wrapper-->
-                            <div class="h-200px image-input-wrapper w-100"
-                                style="background-size: contain; background-position: center;"></div>
-                            <!--end::Image preview wrapper-->
-
-                            <!--begin::Edit button-->
-                            <label
-                                class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-white shadow"
-                                data-kt-image-input-action="change" data-bs-toggle="tooltip" data-bs-dismiss="click"
-                                title="Change avatar">
-                                <i class="bi bi-pencil-fill fs-7"></i>
-
-                                <!--begin::Inputs-->
-                                <input type="file" name="image" accept="image/*" />
-                                <input type="hidden" name="avatar_remove" />
-                                <!--end::Inputs-->
-                            </label>
-                            <!--end::Edit button-->
-
-                            <!--begin::Remove button-->
-                            <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-white shadow"
-                                data-kt-image-input-action="remove" data-bs-toggle="tooltip" data-bs-dismiss="click"
-                                title="Remove avatar">
-                                <i class="bi bi-x fs-2"></i>
-                            </span>
-                            <!--end::Remove button-->
-                        </div>
-                        <!--end::Image input-->
-                        <span>Max image size is 2 MB</span>
-                    </div>
                 </div>
             </div>
         </form>

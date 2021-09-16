@@ -42,6 +42,8 @@ categoryForm?.addEventListener('submit', e => {
                 const name = e.target.name.value;
                 const label = e.target.label?.value;
                 const parent = e.target.parent.value;
+
+                // if user is in edit mode
                 const categoryId = e.target.categoryId?.value;
 
                 axios({
@@ -88,10 +90,9 @@ categoryForm?.addEventListener('submit', e => {
 
 $('#category-label').on('change', function (e) {
     const label = e.target.value;
-
-    // if (label === 'main') {
-    //     return null;
-    // }
+    if (label === 'main') {
+        return;
+    }
 
     // get parent categories
     axios({

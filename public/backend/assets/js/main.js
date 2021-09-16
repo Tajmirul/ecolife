@@ -9,7 +9,7 @@ const getValFromTagify = (string) => {
         const json = JSON.parse(string);
     } catch (err) {
         console.error(err);
-        return 
+        return
     }
 
     const arr = [];
@@ -405,4 +405,56 @@ productAddForm?.addEventListener('submit', (e) => {
             }
         });
     }
+});
+
+document.getElementById('add-ad-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Show loading indication
+    e.submitter.setAttribute('data-kt-indicator', 'on');
+
+    // Disable button to avoid multiple click
+    e.submitter.disabled = true;
+
+    const formData = new FormData();
+    formData.append('slug', e.target.slug.value);
+    formData.append('imageSize', e.target.imageSize.value);
+    formData.append('image', e.target.image.files[0]);
+
+    axios({
+        url: `/${ADMIN_PANEL_PATH}/ad/add`,
+        method: 'POST',
+        data: formData
+    }).then(res => {
+        if (res.statusText === 'OK') {
+            // Show popup confirmation
+            Swal.fire({
+                text: res.data.message,
+                icon: "success",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
+            });
+        }
+    })
+        .catch(err => {
+            Swal.fire({
+                text: err.response.data.message,
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Retry",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
+            });
+        })
+        .finally(() => {
+            // Remove loading indication
+            e.submitter.removeAttribute('data-kt-indicator');
+
+            // Enable button
+            e.submitter.disabled = false;
+        })
 });

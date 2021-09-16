@@ -17,8 +17,12 @@ const {
     getEditCategory,
     postEditCategory,
     deleteCategory,
+    getAddAd,
+    postAddAd,
+    getEditAd,
+    getAds,
 } = require('../controller/adminController');
-// const User = require('../models/UserModel');
+const Ad = require('../models/adModel');
 
 const router = express.Router();
 
@@ -132,6 +136,17 @@ router.post('/category/add', [
         }
         return true;
     }),
+    body('featuredCategory').trim()
+        .notEmpty().withMessage('featuredCategory field is required')
+        .custom((value, { req }) => {
+            if (value === 'true' && !req.body.imageSize) {
+                return Promise.reject(new Error('Please select feature category image size'));
+            }
+            if (value === 'false' && !req.body.image) {
+                return Promise.reject(new Error('Please select feature'));
+            }
+            return true;
+        }),
 ], postAddCategory);
 router.delete('/category/delete', deleteCategory);
 
@@ -156,5 +171,46 @@ router.post('/category/edit', [
         return true;
     }),
 ], postEditCategory);
+
+router.get('/ad', getAds);
+router.get('/ad/add', getAddAd);
+router.post('/ad/add', [
+    body('slug').trim()
+        .notEmpty().withMessage('slug is required')
+        .custom(async (value) => {
+            const adCount = await Ad.find().count();
+            if (adCount >= 3) {
+                return Promise.reject(new Error('Can\'n add more than 3'));
+            }
+
+            const adExists = await Ad.findOne({ slug: value });
+            console.log(adExists);
+            if (adExists) {
+                return Promise.reject(new Error('Slug already exists', 422, true));
+            }
+            return true;
+        }),
+    body('imageSize').trim()
+        .notEmpty().withMessage('Size of ad image is required')
+        .custom(async (value) => {
+            if (value !== 'large') {
+                return true;
+            }
+
+            const adExists = await Ad.findOne({ imageSize: 'large' });
+            if (adExists) {
+                return Promise.reject(new Error('Can\'t add more large Advertisement', 422, true));
+            }
+            return true;
+        }),
+    body('image').custom((value, { req }) => {
+        if (!req.file) {
+            return Promise.reject(new Error('Image is required'));
+        }
+
+        return true;
+    }),
+], postAddAd);
+router.get('/ad/edit', getEditAd);
 
 module.exports = router;
