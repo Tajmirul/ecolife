@@ -2,6 +2,7 @@
 node_modules
 public/uploads
 public/frontend/assets/images
+public/backend/assets/media
 
 
 # files
