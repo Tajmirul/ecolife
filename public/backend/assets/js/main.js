@@ -417,12 +417,13 @@ document.getElementById('add-ad-form')?.addEventListener('submit', (e) => {
     e.submitter.disabled = true;
 
     const formData = new FormData();
+    formData.append('adId', e.target.adId?.value);
     formData.append('slug', e.target.slug.value);
     formData.append('imageSize', e.target.imageSize.value);
     formData.append('image', e.target.image.files[0]);
 
     axios({
-        url: `/${ADMIN_PANEL_PATH}/ad/add`,
+        url: e.target.getAttribute('action'),
         method: 'POST',
         data: formData
     }).then(res => {
@@ -438,23 +439,55 @@ document.getElementById('add-ad-form')?.addEventListener('submit', (e) => {
                 }
             });
         }
-    })
-        .catch(err => {
-            Swal.fire({
-                text: err.response.data.message,
-                icon: "error",
-                buttonsStyling: false,
-                confirmButtonText: "Retry",
-                customClass: {
-                    confirmButton: "btn btn-primary"
-                }
-            });
-        })
-        .finally(() => {
-            // Remove loading indication
-            e.submitter.removeAttribute('data-kt-indicator');
+    }).catch(err => {
+        Swal.fire({
+            text: err.response.data.message,
+            icon: "error",
+            buttonsStyling: false,
+            confirmButtonText: "Retry",
+            customClass: {
+                confirmButton: "btn btn-primary"
+            }
+        });
+    }).finally(() => {
+        // Remove loading indication
+        e.submitter.removeAttribute('data-kt-indicator');
 
-            // Enable button
-            e.submitter.disabled = false;
-        })
+        // Enable button
+        e.submitter.disabled = false;
+    })
 });
+
+$('.delete-ad').on('submit', (e) => {
+    e.preventDefault();
+
+    const adId = e.target.adId.value;
+    axios({
+        url: e.target.getAttribute('action'),
+        method: 'POST',
+        data: { adId }
+    }).then(res => {
+        // Show popup confirmation
+        Swal.fire({
+            text: res.data.message || 'Successful',
+            icon: "success",
+            buttonsStyling: false,
+            confirmButtonText: "Ok, got it!",
+            customClass: {
+                confirmButton: "btn btn-primary"
+            }
+        });
+
+        window.location.reload();
+    }).catch(err => {
+        Swal.fire({
+            text: err.response.data.message,
+            icon: "error",
+            buttonsStyling: false,
+            confirmButtonText: "Retry",
+            customClass: {
+                confirmButton: "btn btn-primary"
+            }
+        });
+    })
+})

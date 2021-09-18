@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { errorValidation } = require('../utils/error-validation');
 const { makeSlug } = require('../utils/makeSlug');
 const { throwError } = require('../utils/throwError');
@@ -10,6 +11,7 @@ const Category = require('../models/categoryModel');
 const Ad = require('../models/adModel');
 
 const { productImageResize } = require('../utils/imageResize');
+const { deleteFile } = require('../utils/file');
 
 module.exports.getIndex = async (req, res, next) => {
     try {
@@ -71,7 +73,6 @@ module.exports.getCategoryLabel = async (req, res, next) => {
         }
 
         const categories = await Category.find({ label: parentCategory });
-        // console.log(categories);
         res.status(200).json({ message: 'Category found', categories });
     } catch (err) {
         next(err);
@@ -118,7 +119,6 @@ module.exports.postAddCategory = async (req, res, next) => {
         try {
             await category.save();
         } catch (err) {
-            console.log(err);
             throwError('Unable to save', 500, true);
         }
 
@@ -182,7 +182,6 @@ module.exports.postEditCategory = async (req, res, next) => {
         try {
             await categoryExists.save();
         } catch (err) {
-            console.log(err);
             throwError('Unable to save', 500, true);
         }
 
@@ -383,7 +382,7 @@ module.exports.getAddAd = async (req, res, next) => {
 
         res.render('admin/layouts/layout', {
             title: 'Add New Advertisement - Ecolife',
-            page: 'pages/ads',
+            page: 'pages/edit-ad',
             path: `/${process.env.ADMIN_PANEL_PATH}/ad/add`,
             user: req.user,
 
@@ -409,7 +408,6 @@ module.exports.postAddAd = async (req, res, next) => {
         try {
             await ad.save();
         } catch (err) {
-            console.log(err);
             throwError('Unable to save', 500, true);
         }
 
@@ -429,8 +427,8 @@ module.exports.getEditAd = async (req, res, next) => {
 
         res.render('admin/layouts/layout', {
             title: 'Add New Advertisement - Ecolife',
-            page: 'pages/ads',
-            path: `/${process.env.ADMIN_PANEL_PATH}/ad/add`,
+            page: 'pages/edit-ad',
+            path: `/${process.env.ADMIN_PANEL_PATH}/ad/edit`,
             user: req.user,
 
             data: {
@@ -443,4 +441,49 @@ module.exports.getEditAd = async (req, res, next) => {
         next(err);
     }
     return null;
+};
+
+module.exports.postEditAd = async (req, res, next) => {
+    try {
+        errorValidation(req);
+
+        const { adId, slug, imageSize } = req.body;
+        const image = req.file?.path?.replace(/\\/g, '/');
+
+        const ad = await Ad.findById(adId);
+        const oldImage = ad.image;
+
+        if (adId) ad.slug = slug;
+        if (imageSize) ad.imageSize = imageSize;
+        if (image) ad.image = image;
+
+        try {
+            await ad.save();
+        } catch (err) {
+            throwError('Unable to save', 500, true);
+        }
+        if (image) deleteFile(oldImage);
+
+        return res.json({ message: 'Advertisement Saved' });
+    } catch (err) {
+        next(err);
+    }
+    return null;
+};
+
+module.exports.deleteAd = async (req, res, next) => {
+    try {
+        const { adId } = req.body;
+        const ad = await Ad.findById(adId);
+        try {
+            await Ad.deleteOne({ _id: adId });
+        } catch (err) {
+            throwError('Unable to delete ad', 500, true);
+        }
+        deleteFile(ad.image);
+
+        res.status(204).json({ message: 'Advertisement Deleted' });
+    } catch (err) {
+        next(err);
+    }
 };

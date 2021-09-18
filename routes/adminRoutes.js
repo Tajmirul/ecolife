@@ -21,6 +21,8 @@ const {
     postAddAd,
     getEditAd,
     getAds,
+    postEditAd,
+    deleteAd,
 } = require('../controller/adminController');
 const Ad = require('../models/adModel');
 
@@ -149,7 +151,6 @@ router.post('/category/add', [
         }),
 ], postAddCategory);
 router.delete('/category/delete', deleteCategory);
-
 router.get('/category/edit', getEditCategory);
 router.post('/category/edit', [
     body('name').trim().notEmpty().withMessage('Category name is required'),
@@ -212,5 +213,32 @@ router.post('/ad/add', [
     }),
 ], postAddAd);
 router.get('/ad/edit', getEditAd);
+router.post('/ad/edit', [
+    body('slug').trim()
+        .notEmpty().withMessage('slug is required')
+        .custom(async (value, { req }) => {
+            const { adId } = req.body;
+            const adExists = await Ad.findOne({ slug: value });
+            if (adExists?._id.toString() !== adId) {
+                return Promise.reject(new Error('Slug already exists', 422, true));
+            }
+            return true;
+        }),
+    body('imageSize').trim()
+        .notEmpty().withMessage('Size of ad image is required')
+        .custom(async (value, { req }) => {
+            if (value !== 'large') {
+                return true;
+            }
+
+            const { adId } = req.body;
+            const adExists = await Ad.findOne({ imageSize: 'large' });
+            if (adExists?._id.toString() !== adId) {
+                return Promise.reject(new Error('Can\'t add more large Advertisement', 422, true));
+            }
+            return true;
+        }),
+], postEditAd);
+router.post('/ad/delete', deleteAd);
 
 module.exports = router;
