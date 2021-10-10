@@ -10,3 +10,12 @@ module.exports.errorValidation = (req) => {
         throw error;
     }
 };
+
+module.exports.sendErrorMessage = (req, res, redirect) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        req.flash('error', errors.array()[0].msg);
+        res.status(422).redirect(redirect);
+    }
+};

@@ -60,16 +60,10 @@ app.use(session({
     store,
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }, // session is valid for 1 week
 }));
-app.use((req, res, next) => {
-    res.locals.message = req.flash();
-    res.locals._csrf = req.csrfToken();
-    next();
-});
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // * accepting file from request
 app.use(multer({ storage: fileStorage, fileFilter }).single('image'));
-
-app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // * get user from session
 app.use(async (req, res, next) => {
@@ -88,6 +82,13 @@ app.use(async (req, res, next) => {
         next(err);
     }
     return null;
+});
+
+app.use((req, res, next) => {
+    res.locals.user = req.user;
+    res.locals.message = req.flash();
+    res.locals._csrf = req.csrfToken();
+    next();
 });
 
 app.use(userRouter);

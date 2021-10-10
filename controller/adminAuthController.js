@@ -19,7 +19,7 @@ module.exports.getSignin = async (req, res, next) => {
 
 module.exports.postSignin = async (req, res, next) => {
     try {
-        errorValidation(req);
+        errorValidation(req, '/signin');
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });

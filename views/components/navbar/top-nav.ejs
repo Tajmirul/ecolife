@@ -14,10 +14,20 @@
                 <div class="header-right-nav">
                     <ul class="res-xs-flex">
                         <li class="after-n">
-                            <a href="wishlist.html" class='d-flex align-items-center'><ion-icon name="heart" class="fs-5 me-1"></ion-icon>Wishlist (0)</a>
+                            <a href="/wishlist" class='d-flex align-items-center'><ion-icon name="heart" class="fs-5 me-1"></ion-icon>Wishlist (0)</a>
                         </li>
                         <li>
-                            <a href="/logout" class='d-flex align-items-center'><ion-icon name="log-out" class="fs-5 me-1"></ion-icon>Log Out</a>
+                            <% if (user) { %>
+                                <form action="/signout" method="post">
+                                    <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                                    <button type="submit" class='align-items-center bg-transparent border-0 d-flex text-light'>
+                                        <ion-icon name="log-out" class="fs-5 me-1"></ion-icon>
+                                        Log Out
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <a href="/signup" class='d-flex align-items-center'><ion-icon name="person-add-sharp" class="fs-6 me-1"></ion-icon>Sign Up</a>
+                            <% } %>
                         </li>
                     </ul>
                 </div>
