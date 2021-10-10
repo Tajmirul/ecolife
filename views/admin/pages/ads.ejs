@@ -37,6 +37,7 @@
                             <div class="banner-card">
                                 <div class="banner-card__icon">
                                     <form action="<%= `/${process.env.ADMIN_PANEL_PATH}/ad/delete` %>" class="delete-ad">
+                                        <input type="hidden" name="_csrf" value="<%= _csrf %>">
                                         <input type="hidden" name="adId" value="<%= ad._id.toString() %>">
                                         <button type="submit" class="btn btn-active-light-primary btn-color-primary btn-icon btn-light btn-sm">
                                             <!--begin::Svg Icon | path: icons/duotone/Layout/Layout-4-blocks-2.svg-->

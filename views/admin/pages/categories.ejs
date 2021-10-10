@@ -59,6 +59,7 @@
                                     </span>
                                 </a>
                                 <form action="/<%= process.env.ADMIN_PANEL_PATH %>/category/delete" class='d-inline-block delete-category'>
+                                    <input type="hidden" name="_csrf" value="<%= _csrf %>">
                                     <input type="hidden" name="categoryId" value="<%= category._id %>" />
                                     <button type="submit" class="btn btn-icon btn-bg-light-danger btn-active-light-danger w-30px h-30px w-md-40px h-md-40px">
                                         <span class="svg-icon svg-icon-1">

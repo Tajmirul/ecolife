@@ -1,5 +1,5 @@
 <!-- Footer Area start -->
-<footer class="footer-area">
+<footer class="footer-area mt-60">
     <div class="footer-top">
         <div class="container">
             <div class="row">
@@ -7,7 +7,7 @@
                 <div class="col-md-6 col-lg-4">
                     <!-- footer logo -->
                     <div class="footer-logo">
-                        <a href="index.html"><img src="public/frontend/assets/images/logo/footer-logo.png" alt="" /></a>
+                        <a href="/"><img src="/public/frontend/assets/images/logo/footer-logo.png" alt="" /></a>
                     </div>
                     <!-- footer logo -->
                     <div class="about-footer">
@@ -25,19 +25,16 @@
                         <div class="social-info">
                             <ul>
                                 <li>
-                                    <a href="#"><i class="ion-social-facebook"></i></a>
+                                    <a href="#"><ion-icon name="logo-facebook"></ion-icon></a>
                                 </li>
                                 <li>
-                                    <a href="#"><i class="ion-social-twitter"></i></a>
+                                    <a href="#"><ion-icon name="logo-youtube"></ion-icon></a>
                                 </li>
                                 <li>
-                                    <a href="#"><i class="ion-social-youtube"></i></a>
+                                    <a href="#"><ion-icon name="logo-twitter"></ion-icon></a>
                                 </li>
                                 <li>
-                                    <a href="#"><i class="ion-social-google"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="ion-social-instagram"></i></a>
+                                    <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
                                 </li>
                             </ul>
                         </div>
@@ -88,6 +85,8 @@
                             <form id="mc-embedded-subscribe-form" class="validate" novalidate="" target="_blank"
                                 name="mc-embedded-subscribe-form" method="post"
                                 action="http://devitems.us11.list-manage.com/subscribe/post?u=6bbb9b6f5827bd842d9640c82&amp;id=05d85f18ef">
+                                <input type="hidden" name="_csrf" value="<%= _csrf %>">
+
                                 <div id="mc_embed_signup_scroll" class="mc-form">
                                     <input class="email" type="email" required="" placeholder="Enter your email here.."
                                         name="EMAIL" value="" />
@@ -103,8 +102,8 @@
                             </form>
                         </div>
                         <div class="img_app">
-                            <a href="#"><img src="public/frontend/assets/images/icons/app_store.png" alt="" /></a>
-                            <a href="#"><img src="public/frontend/assets/images/icons/google_play.png" alt="" /></a>
+                            <a href="#"><img src="/public/frontend/assets/images/icons/app_store.png" alt="" /></a>
+                            <a href="#"><img src="/public/frontend/assets/images/icons/google_play.png" alt="" /></a>
                         </div>
                     </div>
                 </div>
@@ -121,7 +120,7 @@
                         Reserved</p>
                 </div>
                 <div class="col-md-6 col-lg-8">
-                    <img class="payment-img" src="public/frontend/assets/images/icons/payment.png" alt="" />
+                    <img class="payment-img" src="/public/frontend/assets/images/icons/payment.png" alt="" />
                 </div>
             </div>
         </div>

@@ -3,10 +3,10 @@
 
 // * utils function
 const getValFromTagify = (string) => {
-    console.log(string);
+    let json;
 
     try {
-        const json = JSON.parse(string);
+        json = JSON.parse(string);
     } catch (err) {
         console.error(err);
         return
@@ -101,6 +101,7 @@ editBannerForm?.addEventListener('submit', function (e) {
                 // submit form via api
                 const form = e.target;
                 const formData = new FormData();
+                formData.append('bannerId', form.bannerId.value);
                 formData.append('heading', form.heading.value);
                 formData.append('text', form.text.value);
                 formData.append('productCategory', form.productCategory.value);
@@ -109,6 +110,9 @@ editBannerForm?.addEventListener('submit', function (e) {
                 axios({
                     url: e.target.getAttribute('action'),
                     method: 'POST',
+                    headers: {
+                        'CSRF-Token': form._csrf.value,
+                    },
                     data: formData,
                 })
                     .then(res => {
@@ -158,8 +162,11 @@ bannerDeleteForms.forEach(bannerDeleteForm => {
         e.preventDefault();
 
         axios({
-            url: `/${process.env.ADMIN_PANEL_PATH}/banner/delete`,
+            url: `/${ADMIN_PANEL_PATH}/banner/delete`,
             method: 'DELETE',
+            headers: {
+                'CSRF-Token': e.target._csrf.value,
+            },
             data: { _id: e.target._id.value, }
         })
             .then(res => {
@@ -247,13 +254,6 @@ try {
                         },
                     }
                 },
-                'flag': {
-                    validators: {
-                        notEmpty: {
-                            message: 'Flag should not be empty'
-                        },
-                    }
-                },
                 // 'image': {
                 //     validators: {
                 //         notEmpty: {
@@ -297,10 +297,7 @@ tinymce.init({
     placeholder: 'Type product description ...'
 });
 
-const productTags = document.querySelector('.product-tags')
-const productFlag = document.querySelector('.product-flag')
-new Tagify(productTags, {
-    whitelist: ['juice', 'fruit', 'snacks', 'vegetable'],
+const productTags = new Tagify(document.querySelector('.product-tags'), {
     maxTags: 10,
     dropdown: {
         maxItems: 15,
@@ -309,21 +306,11 @@ new Tagify(productTags, {
         closeOnSelect: false,
     }
 });
-new Tagify(productFlag, {
-    whitelist: ['NEW', 'HOT'],
-    maxTags: 1,
-    dropdown: {
-        maxItems: 10,
-        classname: "tagify__inline__suggestions",
-        enabled: 0,
-        closeOnSelect: true,
-    }
-});
 
 const productAddForm = document.querySelector('.product-form');
 productAddForm?.addEventListener('submit', (e) => {
     e.preventDefault();
-    tinyMCE.triggerSave();
+    tinyMCE?.triggerSave();
 
     // Validate form before submit
     if (productValidator) {
@@ -336,18 +323,21 @@ productAddForm?.addEventListener('submit', (e) => {
                 e.submitter.disabled = true;
 
                 // get inputs value
+                const _csrf = e.target._csrf.value;
+                const productId = e.target.productId?.value;
                 const title = e.target.title.value;
                 const price = e.target.price.value;
                 const discount = e.target.discount.value;
                 const category = e.target.category.value;
                 const tags = JSON.stringify(getValFromTagify(e.target.tags.value));
-                const flag = JSON.stringify(getValFromTagify(e.target.flag.value));
+                const flag = e.target.flag.value;
                 const image = e.target.image.files[0];
                 const shortDescription = e.target.shortDescription.value;
                 const description = e.target.description.value;
 
                 // submit form via api
                 const formData = new FormData();
+                formData.append('productId', productId);
                 formData.append('title', title);
                 formData.append('price', price);
                 formData.append('discount', discount);
@@ -361,30 +351,31 @@ productAddForm?.addEventListener('submit', (e) => {
                 axios({
                     url: e.target.getAttribute('action'),
                     method: 'POST',
+                    headers: {
+                        'CSRF-Token': _csrf,
+                    },
                     data: formData,
                 })
                     .then(res => {
-                        if (res.statusText === 'OK') {
-                            // Show popup confirmation
-                            Swal.fire({
-                                text: res.data.message,
-                                icon: "success",
-                                buttonsStyling: false,
-                                confirmButtonText: "Add Another",
-                                customClass: {
-                                    confirmButton: "btn btn-primary"
-                                },
-                            })
-                                .then(result => {
-                                    if (result.isConfirmed) {
-                                        e.target.reset()
-                                    }
-                                });
-                        }
+                        // Show popup confirmation
+                        Swal.fire({
+                            text: res.data.message,
+                            icon: "success",
+                            buttonsStyling: false,
+                            confirmButtonText: "Add Another",
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            },
+                        })
+                            .then(result => {
+                                if (result.isConfirmed) {
+                                    productTags.removeAllTags();
+                                    e.target.reset();
+                                }
+                            });
+                        window.location.replace(`/${ADMIN_PANEL_PATH}/product`);
                     })
                     .catch(err => {
-                        console.log(err);
-
                         Swal.fire({
                             text: err.response?.data?.message || 'Something is wrong!',
                             icon: "error",
@@ -401,6 +392,7 @@ productAddForm?.addEventListener('submit', (e) => {
 
                         // Enable button
                         e.submitter.disabled = false;
+                        // remove all tags
                     })
             }
         });
@@ -416,6 +408,7 @@ document.getElementById('add-ad-form')?.addEventListener('submit', (e) => {
     // Disable button to avoid multiple click
     e.submitter.disabled = true;
 
+    const _csrf = e.target._csrf.value;
     const formData = new FormData();
     formData.append('adId', e.target.adId?.value);
     formData.append('slug', e.target.slug.value);
@@ -425,6 +418,9 @@ document.getElementById('add-ad-form')?.addEventListener('submit', (e) => {
     axios({
         url: e.target.getAttribute('action'),
         method: 'POST',
+        headers: {
+            'CSRF-Token': _csrf,
+        },
         data: formData
     }).then(res => {
         if (res.statusText === 'OK') {
@@ -461,10 +457,14 @@ document.getElementById('add-ad-form')?.addEventListener('submit', (e) => {
 $('.delete-ad').on('submit', (e) => {
     e.preventDefault();
 
+    const _csrf = e.target._csrf.value;
     const adId = e.target.adId.value;
     axios({
         url: e.target.getAttribute('action'),
         method: 'POST',
+        headers: {
+            'CSRF-Token': _csrf,
+        },
         data: { adId }
     }).then(res => {
         // Show popup confirmation
@@ -490,4 +490,71 @@ $('.delete-ad').on('submit', (e) => {
             }
         });
     })
+});
+
+// toggle product feature
+document.querySelectorAll('.make-featured-product').forEach(item => {
+    item.addEventListener('submit', (e) => {
+        e.preventDefault();
+    
+        const _csrf = e.target._csrf.value;
+        const productId = e.target.productId.value;
+        axios({
+            url: e.target.getAttribute('action'),
+            method: 'POST',
+            headers: {
+                'CSRF-Token': _csrf,
+            },
+            data: { productId },
+        }).then(res => {
+            $(e.submitter).find('i').toggleClass('bi-star bi-star-fill');
+        }).catch(err => {
+            Swal.fire({
+                text: err.response.data.message,
+                icon: "success",
+                buttonsStyling: false,
+                confirmButtonText: "Add Another",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                },
+            })
+        })
+    });
 })
+
+// delete product
+document.querySelector('.delete-product')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const _csrf = e.target._csrf.value;
+    const productId = e.target.productId.value;
+    axios({
+        url: e.target.getAttribute('action'),
+        method: 'POST',
+        headers: {
+            'CSRF-Token': _csrf,
+        },
+        data: { productId },
+    }).then(res => {
+        Swal.fire({
+            text: res.data.message,
+            icon: "success",
+            buttonsStyling: false,
+            confirmButtonText: "Add Another",
+            customClass: {
+                confirmButton: "btn btn-primary"
+            },
+        })
+        window.location.reload();
+    }).catch(err => {
+        Swal.fire({
+            text: err.response.data.message,
+            icon: "success",
+            buttonsStyling: false,
+            confirmButtonText: "Add Another",
+            customClass: {
+                confirmButton: "btn btn-primary"
+            },
+        })
+    })
+});

@@ -20,7 +20,7 @@ module.exports.productImageResize = async (filePath) => {
             sizeNumber: 100,
         }];
         const compressedFilePath = path.join(path.dirname(filePath), `${path.parse(filePath).name}-${sizeArray[i].sizeText}${path.parse(filePath).ext}`);
-        oneSet[sizeArray[i].sizeText] = compressedFilePath;
+        oneSet[sizeArray[i].sizeText] = compressedFilePath.replace(/\\/g, '/');
 
         promises.push(sharp(filePath)
             .resize({
@@ -32,9 +32,9 @@ module.exports.productImageResize = async (filePath) => {
     await Promise.all(promises);
 
     const newPath = path.join(path.dirname(filePath), `${path.parse(filePath).name}-extraLarge${path.parse(filePath).ext}`);
-    oneSet.extraLarge = newPath;
+    oneSet.extraLarge = newPath.replace(/\\/g, '/');
 
-    await fs.rename(filePath, newPath, (err) => {
+    fs.rename(filePath, newPath, (err) => {
         if (err) {
             throwError('Unable to rename file', 500, true);
         }

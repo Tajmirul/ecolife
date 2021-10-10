@@ -18,9 +18,16 @@ const userSchema = new mongoose.Schema({
 
     cart: {
         total: { type: Number, default: 0 },
-        produces: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+        item: [{
+            productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+            quantity: { type: Number, required: true },
+        }],
     },
-    // reviewsId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
+    wishList: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true,
+    }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

@@ -10,6 +10,8 @@
     <!--begin::Body-->
     <div class="card-body pt-5">
         <form id="add-category-form" action="<%= `/${process.env.ADMIN_PANEL_PATH}/category/${data.editMode ? 'edit' : 'add'}` %>">
+            <input type="hidden" name="_csrf" value="<%= _csrf %>">
+            
             <div class="row">
                 <div class="col-md-6 col-lg-5">
                     <% if (data.editMode) { %>

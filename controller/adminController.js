@@ -1,4 +1,3 @@
-const fs = require('fs');
 const { errorValidation } = require('../utils/error-validation');
 const { makeSlug } = require('../utils/makeSlug');
 const { throwError } = require('../utils/throwError');
@@ -9,6 +8,7 @@ const Product = require('../models/productModel');
 const User = require('../models/UserModel');
 const Category = require('../models/categoryModel');
 const Ad = require('../models/adModel');
+const Tag = require('../models/tagModel');
 
 const { productImageResize } = require('../utils/imageResize');
 const { deleteFile } = require('../utils/file');
@@ -220,15 +220,21 @@ module.exports.getBanners = async (req, res) => {
     });
 };
 
-module.exports.getAddBanner = (req, res) => {
-    res.render('admin/layouts/layout', {
-        title: 'Add Banner - Ecolife',
-        page: 'pages/edit-banner',
-        path: `/${process.env.ADMIN_PANEL_PATH}/banner/add`,
-        user: req.user,
+module.exports.getAddBanner = async (req, res, next) => {
+    try {
+        const categories = await Category.find();
 
-        data: { editMode: false },
-    });
+        res.render('admin/layouts/layout', {
+            title: 'Add Banner - Ecolife',
+            page: 'pages/edit-banner',
+            path: `/${process.env.ADMIN_PANEL_PATH}/banner/add`,
+            user: req.user,
+
+            data: { editMode: false, categories },
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
 module.exports.postAddBanner = async (req, res, next) => {
@@ -256,15 +262,79 @@ module.exports.postAddBanner = async (req, res, next) => {
         } catch (err) {
             throwError('Unable to save banner', 500, true);
         }
-        return res.status(200).json({ message: 'Success! Banner information has been added.' });
+        return res.status(200).json({ message: 'Banner information has been saved' });
     } catch (err) {
         next(err);
     }
     return null;
 };
+
+module.exports.getEditBanner = async (req, res, next) => {
+    try {
+        const { bannerId } = req.query;
+        const banner = await Banner.findById(bannerId);
+        const categories = await Category.find();
+
+        if (!banner) {
+            return next();
+        }
+
+        res.render('admin/layouts/layout', {
+            title: 'Add Banner - Ecolife',
+            page: 'pages/edit-banner',
+            path: `/${process.env.ADMIN_PANEL_PATH}/banner/add`,
+            user: req.user,
+
+            data: { editMode: true, banner, categories },
+        });
+    } catch (err) {
+        next(err);
+    }
+    return null;
+};
+
+module.exports.postEditBanner = async (req, res, next) => {
+    try {
+        errorValidation(req);
+        const {
+            bannerId, heading, text, productCategory,
+        } = req.body;
+
+        let oldImage;
+        const banner = await Banner.findById(bannerId);
+
+        if (heading) {
+            banner.slug = makeSlug(heading);
+            banner.heading = heading;
+        }
+        if (text) banner.heading = text;
+        if (productCategory) banner.productCategory = productCategory;
+        if (req.file) {
+            oldImage = banner.image;
+            banner.image = req.file.path.replace(/\\/g, '/');
+        }
+
+        try {
+            await banner.save();
+        } catch (err) {
+            throwError('Unable to save banner', 500, true);
+        }
+        if (oldImage) deleteFile(oldImage);
+        return res.status(200).json({ message: 'Banner is updated' });
+    } catch (err) {
+        next(err);
+    }
+    return null;
+};
+
 module.exports.deleteBanner = async (req, res, next) => {
     try {
         const { _id } = req.body;
+
+        const banner = await Banner.findOne({ _id });
+        if (!banner) {
+            throwError('Unable to find banner', 404, true);
+        }
 
         try {
             await Banner.deleteOne({ _id });
@@ -301,13 +371,16 @@ module.exports.getProducts = async (req, res, next) => {
 };
 
 module.exports.getAddProduct = async (req, res) => {
+    const categories = await Category.find();
+    const tags = await Tag.find();
+
     res.render('admin/layouts/layout', {
         title: 'Add New Product - Ecolife',
         page: 'pages/edit-product',
         path: `/${process.env.ADMIN_PANEL_PATH}/product/add`,
         user: req.user,
 
-        data: { editMode: false },
+        data: { editMode: false, categories, tags },
     });
 };
 
@@ -319,14 +392,34 @@ module.exports.postAddProduct = async (req, res, next) => {
         }
 
         const {
-            title, price, discount, category, shortDescription, description,
+            title, price, discount, category, shortDescription, description, flag,
         } = req.body;
         const tags = JSON.parse(req.body.tags);
-        const flag = JSON.parse(req.body.flag);
+
+        // save tags of product
+        try {
+            tags.forEach(async (item) => {
+                const tag = await Tag.findOne({ name: item.toLowerCase() });
+                if (!tag) {
+                    const newTag = new Tag({
+                        name: item.toLowerCase(),
+                        slug: makeSlug(item),
+                    });
+                    await newTag.save();
+                }
+            });
+        } catch (err) {
+            throwError('Unable to save Tag', 500, true);
+        }
 
         // resize image 800x800 => 100x100, 360x360, 630x630
         // oneSet = {thumb, normal, large, extraLarge}
-        const oneSet = await productImageResize(req.file.path);
+        let oneSet;
+        try {
+            oneSet = await productImageResize(req.file.path);
+        } catch (err) {
+            next(err);
+        }
 
         // check if product already exists
         const existingProduct = await Product.findOne({ slug: makeSlug(title) });
@@ -336,6 +429,7 @@ module.exports.postAddProduct = async (req, res, next) => {
 
         // create new product
         const product = new Product({
+            userId: req.user._id,
             slug: makeSlug(title),
             title,
             price,
@@ -356,6 +450,144 @@ module.exports.postAddProduct = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+};
+
+module.exports.getEditProduct = async (req, res, next) => {
+    try {
+        const { productId } = req.query;
+        const product = await Product.findById(productId).populate('category');
+        if (!product) {
+            return next();
+        }
+
+        const categories = await Category.find();
+
+        res.render('admin/layouts/layout', {
+            title: 'Edit Product - Ecolife',
+            page: 'pages/edit-product',
+            path: `/${process.env.ADMIN_PANEL_PATH}/product/edit`,
+            user: req.user,
+
+            data: { editMode: true, categories, product },
+        });
+    } catch (err) {
+        next(err);
+    }
+    return null;
+};
+
+module.exports.postEditProduct = async (req, res, next) => {
+    try {
+        errorValidation(req);
+        let oldImages;
+        if (req.file) {
+            checkFileExt(req.file.originalname, 'image');
+        }
+
+        const {
+            productId, title, price, discount, category, shortDescription, description, flag,
+        } = req.body;
+        let tags;
+        try {
+            tags = JSON.parse(req.body.tags);
+        } catch (err) {
+            throwError('Edit tags and try again', 422, true);
+        }
+
+        // resize image 800x800 => 100x100, 360x360, 630x630
+        // oneSet = {thumb, normal, large, extraLarge}
+        let oneSet;
+        if (req.file) {
+            try {
+                oneSet = await productImageResize(req.file.path);
+            } catch (err) {
+                next(err);
+            }
+        }
+
+        // check if product already exists
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            throwError('Product Not Found', 404, true);
+        }
+
+        if (title) {
+            product.title = title;
+            product.slug = makeSlug(title);
+        }
+        if (price) product.price = price;
+        if (discount) product.discount = discount;
+        if (category) product.category = category;
+        if (tags) product.tags = tags;
+        if (flag) product.flag = flag;
+        if (shortDescription) product.shortDescription = shortDescription;
+        if (description) product.description = description;
+        if (req.file) {
+            oldImages = product.images;
+            product.images = [oneSet];
+        }
+
+        try {
+            product.save();
+        } catch (err) {
+            throwError('Unable to save product', 500, true);
+        }
+        res.status(200).json({ message: 'Product successfully added' });
+        // delete all previous images
+        if (oldImages) {
+            oldImages.forEach((imageBlock) => {
+                deleteFile(imageBlock.thumb);
+                deleteFile(imageBlock.normal);
+                deleteFile(imageBlock.large);
+                deleteFile(imageBlock.extraLarge);
+            });
+        }
+    } catch (err) {
+        next(err);
+    }
+    return null;
+};
+
+module.exports.postProductFeatured = async (req, res, next) => {
+    try {
+        const { productId } = req.body;
+        const product = await Product.findById(productId);
+        if (!product) {
+            throwError('Product Not Found', 404, true);
+        }
+
+        product.featured = !product.featured;
+        try {
+            product.save();
+        } catch (err) {
+            throwError('Unable to save product', 500, true);
+        }
+        return res.status(200).json({ message: 'Product saved' });
+    } catch (err) {
+        next(err);
+    }
+    return null;
+};
+
+module.exports.postDeleteProduct = async (req, res, next) => {
+    try {
+        const { productId } = req.body;
+        const product = await Product.deleteOne({ _id: productId });
+
+        // delete all previous images
+        product.images.forEach((imageBlock) => {
+            deleteFile(imageBlock.thumb);
+            deleteFile(imageBlock.normal);
+            deleteFile(imageBlock.large);
+            deleteFile(imageBlock.extraLarge);
+        });
+
+        res.status(200).json({ message: 'Product Deleted' });
+    } catch (err) {
+        next(err);
+    }
+    return null;
 };
 
 module.exports.getAds = async (req, res, next) => {

@@ -674,7 +674,6 @@
         margin-top: 0px;
         position: relative;
         z-index: 1;
-        width: 30%;
     }
     .cart-info {
     margin: 5px 0px 0 35px;
@@ -768,14 +767,6 @@
     .dropdown_search {
         width: 370px;
         left: -333px;
-    }
-    .header_account_area {
-        margin-top: 0px;
-        margin-right: 0;
-        position: absolute;
-        top: -40px;
-        width: 100%;
-        right: 12%;
     }
     .home-4 .header_account_area {
         margin-right: 0px;
@@ -2071,9 +2062,9 @@
     .home-4 .main-navigation ul li ul.mega-menu-wrap {
         left: -300px;
     }
-    .home-4 .main-navigation {
+    /* .home-4 .main-navigation {
         margin-left: 80px;
-    }
+    } */
 
     .home-6 .main-navigation ul li ul.mega-menu-wrap {
         left: -100px;

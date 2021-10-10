@@ -39,6 +39,7 @@ categoryForm?.addEventListener('submit', e => {
                 // Disable button to avoid multiple click
                 e.submitter.disabled = true;
 
+                const _csrf = e.target._csrf.value;
                 const name = e.target.name.value;
                 const label = e.target.label?.value;
                 const parent = e.target.parent.value;
@@ -49,6 +50,9 @@ categoryForm?.addEventListener('submit', e => {
                 axios({
                     url: e.target.getAttribute('action'),
                     method: 'post',
+                    headers: {
+                        'CSRF-Token': _csrf,
+                    },
                     data: { name, label, parent, categoryId },
                 }).then(res => {
                     Swal.fire({
@@ -89,6 +93,7 @@ categoryForm?.addEventListener('submit', e => {
 });
 
 $('#category-label').on('change', function (e) {
+    const _csrf = e.target._csrf.value;
     const label = e.target.value;
     if (label === 'main') {
         return;
@@ -98,6 +103,9 @@ $('#category-label').on('change', function (e) {
     axios({
         url: `/${ADMIN_PANEL_PATH}/category-label`,
         method: 'post',
+        headers: {
+            'CSRF-Token': _csrf,
+        },
         data: { label },
     }).then(res => {
         let options = res.data.categories.map(category => {
@@ -121,12 +129,15 @@ $('#category-label').on('change', function (e) {
 $('.delete-category').submit((e) => {
     e.preventDefault();
 
+    const _csrf = e.target._csrf.value;
     const categoryId = e.target.categoryId.value;
-    console.log(categoryId);
 
     axios({
         url: e.target.getAttribute('action'),
         method: 'delete',
+        headers: {
+            'CSRF-Token': _csrf,
+        },
         data: { categoryId },
     }).then(res => {
         Swal.fire({

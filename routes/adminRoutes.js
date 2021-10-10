@@ -23,6 +23,12 @@ const {
     getAds,
     postEditAd,
     deleteAd,
+    getEditBanner,
+    postEditBanner,
+    getEditProduct,
+    postEditProduct,
+    postProductFeatured,
+    postDeleteProduct,
 } = require('../controller/adminController');
 const Ad = require('../models/adModel');
 
@@ -55,6 +61,22 @@ router.post('/banner/add', [
         return false;
     }).withMessage('Select an background image(.png, .jpg, .jpeg and .webp)'),
 ], postAddBanner);
+router.get('/banner/edit', getEditBanner);
+router.post('/banner/edit', [
+    body('heading').trim()
+        .not().isEmpty()
+        .withMessage('Banner heading can\'t be empty')
+        .isLength({ max: 100 })
+        .withMessage('Max length of heading is 100'),
+    body('text').trim()
+        .not().isEmpty()
+        .withMessage('Banner text is required')
+        .isLength({ max: 50 })
+        .withMessage('Max length of text is 50'),
+    body('productCategory').trim()
+        .not().isEmpty()
+        .withMessage('Select a category'),
+], postEditBanner);
 router.delete('/banner/delete', deleteBanner);
 
 // manage product
@@ -88,8 +110,6 @@ router.post('/product/add', [
         .not().isEmpty().withMessage('Category can\'t be empty'),
     body('tags')
         .not().isEmpty().withMessage('Please select at least one tag'),
-    body('flag')
-        .notEmpty().withMessage('Flag should not be empty'),
     body('shortDescription')
         .notEmpty().withMessage('Short description should not be empty'),
     body('description')
@@ -104,6 +124,56 @@ router.post('/product/add', [
         return true;
     }),
 ], postAddProduct);
+router.get('/product/edit', getEditProduct);
+router.post('/product/edit', [
+    body('title').trim()
+        .not().isEmpty()
+        .withMessage('Product title can\'t be empty')
+        .isLength({ max: 100 })
+        .withMessage('Max length of title is 100'),
+    body('price').trim()
+        .not().isEmpty()
+        .withMessage('Price can\'t be empty')
+        .isNumeric()
+        .withMessage('Price should be a number')
+        .custom((value) => {
+            if (value < 100) {
+                return Promise.reject(new Error('Price should be greater than 50'));
+            }
+            return true;
+        }),
+    body('discount').trim()
+        .custom((value) => {
+            if (Number.isNaN(+value)) {
+                return Promise.reject(new Error('Discount should be a number'));
+            }
+            return true;
+        }),
+    body('category')
+        .notEmpty().withMessage('Category is empty'),
+    body('tags').trim()
+        .notEmpty().withMessage('Please select at least one tag')
+        .custom((value) => {
+            console.log(value);
+            return true;
+        }),
+
+    // .isLength({ min: 50, max: 300 })
+    // .withMessage('50 < Short Description < 301')
+    body('shortDescription')
+        .notEmpty()
+        .withMessage('Short description should not be empty'),
+    body('description')
+        .notEmpty().withMessage('Description should not be empty'),
+    body('image').custom((value, { req }) => {
+        if (req.file?.size > 2000000) {
+            return Promise.reject(new Error('Image is too large'));
+        }
+        return true;
+    }),
+], postEditProduct);
+router.post('/product/featured', postProductFeatured);
+router.post('/product/delete', postDeleteProduct);
 
 // manage categories
 router.get('/category', getCategories);
@@ -138,17 +208,6 @@ router.post('/category/add', [
         }
         return true;
     }),
-    body('featuredCategory').trim()
-        .notEmpty().withMessage('featuredCategory field is required')
-        .custom((value, { req }) => {
-            if (value === 'true' && !req.body.imageSize) {
-                return Promise.reject(new Error('Please select feature category image size'));
-            }
-            if (value === 'false' && !req.body.image) {
-                return Promise.reject(new Error('Please select feature'));
-            }
-            return true;
-        }),
 ], postAddCategory);
 router.delete('/category/delete', deleteCategory);
 router.get('/category/edit', getEditCategory);

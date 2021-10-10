@@ -1,4 +1,15 @@
 /* reset css */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 7px;
+}
+::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #e2e2e2;
+    border-radius: 50px;
+}
 
 img {
     max-width: 100%;

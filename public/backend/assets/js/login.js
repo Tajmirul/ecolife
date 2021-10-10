@@ -45,12 +45,16 @@ signInForm.addEventListener('submit', function (e) {
                 // Disable button to avoid multiple click
                 e.submitter.disabled = true;
 
+                const _csrf = e.target._csrf.value;
                 const email = e.target.email.value;
                 const password = e.target.password.value;
 
                 axios({
                     url: e.target.getAttribute('action'),
                     method: 'POST',
+                    headers: {
+                        'CSRF-Token': _csrf,
+                    },
                     data: { email, password },
                 }).then(res => {
                     if (res.statusText === 'OK') {

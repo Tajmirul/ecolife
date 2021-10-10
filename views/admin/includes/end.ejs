@@ -15,12 +15,12 @@
     <script src="/public/backend/assets/js/signup.js"></script>
 <% } %>
 
-<% if (path.startsWith(`/${process.env.ADMIN_PANEL_PATH}/category`)) { %>
-    <script src="/public/backend/assets/js/category.js"></script>
-<% } %>
-
 <% if (path ==='/auth/signin' ) { %>
     <script src="/public/backend/assets/js/login.js"></script>
+<% } %>
+
+<% if (path.startsWith(`/${process.env.ADMIN_PANEL_PATH}/category`)) { %>
+    <script src="/public/backend/assets/js/category.js"></script>
 <% } %>
 
 <script src="/public/backend/assets/js/main.js"></script>

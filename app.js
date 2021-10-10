@@ -2,24 +2,22 @@ const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const csrf = require('csurf');
 const multer = require('multer');
 const session = require('express-session');
+const flash = require('connect-flash');
+const cookieParser = require('cookie-parser');
+// const bodyParser = require('body-parser');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const userRouter = require('./routes/userRoutes');
 const adminRouter = require('./routes/adminRoutes');
+const userAuthRouter = require('./routes/userAuthRouter');
 const adminAuthRouter = require('./routes/adminAuthRouter');
+const User = require('./models/UserModel');
 const { get404, getError } = require('./controller/errorController');
 const { isAuth } = require('./middleware/isAuth');
-const User = require('./models/UserModel');
 
-const app = express();
-
-// configuring variables of .env file
-dotenv.config();
-app.set('view engine', 'ejs');
-
-// * begin::accepting file from request
-
+const csrfProtection = csrf({ cookie: true });
 // define storage path
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'public/uploads'),
@@ -39,8 +37,22 @@ const store = new MongoDBStore({
     uri: process.env.MONGO_STRING,
     collection: 'sessions',
 });
-app.use(multer({ storage: fileStorage, fileFilter }).single('image'));
-// * end::accepting file from request
+
+const app = express();
+
+// configuring variables of .env file
+dotenv.config();
+app.set('view engine', 'ejs');
+// enable request body
+app.use(cookieParser());
+// to parse url encoded payload (form)
+app.use(express.urlencoded({ extended: true }));
+// to parse json payload
+app.use(express.json());
+app.use(csrfProtection);
+// activating flash message
+app.use(flash());
+// activating session
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -48,7 +60,18 @@ app.use(session({
     store,
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }, // session is valid for 1 week
 }));
+app.use((req, res, next) => {
+    res.locals.message = req.flash();
+    res.locals._csrf = req.csrfToken();
+    next();
+});
 
+// * accepting file from request
+app.use(multer({ storage: fileStorage, fileFilter }).single('image'));
+
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// * get user from session
 app.use(async (req, res, next) => {
     try {
         const sessionUser = req.session.user;
@@ -67,11 +90,8 @@ app.use(async (req, res, next) => {
     return null;
 });
 
-// enable request body
-app.use(express.json());
-app.use('/public', express.static(path.join(__dirname, 'public')));
-
 app.use(userRouter);
+app.use(userAuthRouter);
 app.use(`/${process.env.ADMIN_PANEL_PATH}/auth`, adminAuthRouter);
 app.use(`/${process.env.ADMIN_PANEL_PATH}`, isAuth, adminRouter);
 
@@ -84,7 +104,7 @@ app.use(getError);
 // connect to database
 mongoose.connect(process.env.MONGO_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        console.log(`Listening at port ${process.env.PORT || 8080}`);
+        console.log(`Listening at http://localhost:${process.env.PORT || 8080}`);
         // listening for incoming request
         app.listen(process.env.PORT || 8080);
     })

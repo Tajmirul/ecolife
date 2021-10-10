@@ -11,3 +11,4 @@ public/backend/assets/media
 public/uploads/*
 package-lock.json
 yarn.lock
+yarn-error.log

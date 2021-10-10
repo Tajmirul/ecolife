@@ -14,10 +14,15 @@
     <div class="card-body pt-5">
         <!-- begin::product add || edit -->
         <form action="/<%= process.env.ADMIN_PANEL_PATH %>/product/<%= data.editMode ? 'edit' : 'add' %>"
-            class="product-form" autocomplete="off" editMode="<%= data.editMode === 'edit' %>">
+            class="product-form" autocomplete="off">
+            <input type="hidden" name="_csrf" value="<%= _csrf %>">
+
+            <% if (data.product) { %>
+                <input type="hidden" name="productId" value="<%= data.product._id %>">
+            <% } %>
             <div class="fv-row mb-5">
                 <label class="form-label required">Title</label>
-                <input type="text" class="form-control form-control-solid" placeholder="Title" name="title" />
+                <input type="text" class="form-control form-control-solid" placeholder="Title" name="title" value="<%= data.product?.title %>" />
             </div>
 
             <div class="row">
@@ -25,14 +30,14 @@
                     <div class="fv-row mb-5">
                         <label class="form-label required">Price</label>
                         <input type="number" class="form-control form-control-solid" placeholder="Price" name="price"
-                            min="40" />
+                            min="40" value="<%= data.product?.price %>" />
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="fv-row mb-5">
                         <label class="form-label">Discount</label>
                         <input type="number" class="form-control form-control-solid" placeholder="Discount"
-                            name="discount" />
+                            name="discount" value="<%= data.product?.discount %>" />
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -41,24 +46,31 @@
                         <select class="form-select form-select-solid" data-control="select2"
                             data-placeholder="Select a category" name="category">
                             <option></option>
-                            <option value="juice">Juice</option>
-                            <option value="fruit">Fruit</option>
-                            <option value="snacks">Snacks</option>
+                            <% data.categories.forEach(category => { %>
+                                <option value="<%= category._id %>" <%= data.product?.category._id.toString() === category._id.toString() && 'selected' %> ><%= category.name %></option>
+                            <% }) %>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-8">
                     <div class="fv-row mb-5">
                         <label class="form-label required">Tags</label>
-                        <input type="text" class="form-control form-control-solid product-tags" placeholder="Tags" value="juice, snacks"
-                            name="tags" />
+                        <input type="text" class="form-control form-control-solid product-tags" placeholder="Tags" 
+                            value="<%= data.product?.tags %>"
+                            name="tags"
+                            data-whitelist="<%= data.tags?.map(tag => tag.name) %>"
+                        />
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="fv-row mb-5">
                         <label class="form-label">Flag</label>
-                        <input type="text" class="form-control form-control-solid product-flag"
-                            placeholder="Maximum 1 tag" name="flag" value="NEW" />
+                        <select class="form-select form-select-solid" data-control="select2"
+                            data-placeholder="Select Flag" name="flag">
+                            <option></option>
+                            <option value="HOT" <%= data.product?.flag == "HOT" && 'selected' %> >HOT</option>
+                            <option value="NEW" <%= data.product?.flag == "NEW" && 'selected' %> >NEW</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-12">
@@ -69,7 +81,7 @@
                         <label class="form-label">Extra Large (800x800)</label>
                         <!--begin::Image input-->
                         <div class="image-input image-input-empty w-100" data-kt-image-input="true"
-                            style="background-image: linear-gradient(to right, #009ef7ab, #00f7e0);background-position: center;background-size: cover;">
+                            style="background-image: <%= data.product ? `url(/${data.product?.images[0].large})` : `linear-gradient(to right, #009ef7ab, #00f7e0)` %>;background-position: center;background-size: cover;">
                             <!--begin::Image preview wrapper-->
                             <div class="h-200px image-input-wrapper w-100"
                                 style="background-size: contain; background-position: center;"></div>
@@ -105,14 +117,14 @@
                     <div class="fv-row mb-5">
                         <label class="form-label required">Short Description</label>
                         <textarea class="form-control form-control-solid h-200px" placeholder="Short Description"
-                            name="shortDescription"></textarea>
+                            name="shortDescription" minlength="50" maxlength="300" ><%= data.product?.shortDescription %></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="fv-row mb-5">
                 <textarea class="form-control form-control-solid h-200px productDescription" placeholder="Description"
-                    name="description"></textarea>
+                    name="description"><%= data.product?.description %></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">

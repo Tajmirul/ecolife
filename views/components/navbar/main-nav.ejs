@@ -4,83 +4,82 @@
         <div class="container-inner">
             <div class="row">
                 <!-- Logo Start -->
-                <div class="col-md-2 col-sm-2">
+                <div class="col-auto col-md-2">
                     <div class="logo">
-                        <a href="/"><img src="public/frontend/assets/images/logo/logo.jpg" alt="" /></a>
+                        <a href="/"><img src="/public/frontend/assets/images/logo/logo.jpg" alt="" /></a>
                     </div>
                 </div>
                 <!-- Logo End -->
                 <!-- Navigation Start -->
-                <div class="col-md-10 col-sm-10">
+                <div class="col col-md-10">
                     <!--Main Navigation Start -->
                     <div class="main-navigation d-none d-lg-block">
                         <form action="#" class="navbar-search">
+                            <input type="hidden" name="_csrf" value="<%= _csrf %>">
                             <div class='open-dropdown' data-dropdown-open-on="focus">
                                 <button type="button"
                                     class='navbar-search__button navbar-search__button--hover dropdown-button me-3'
-                                    id="open-navbar-category" data-target="#navbar-category"><i
-                                        class="ion-android-menu"></i></button>
+                                    id="open-navbar-category" data-target="#navbar-category">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <rect x="0" y="0" width="24" height="24"/>
+                                            <rect fill="#000000" x="4" y="5" width="16" height="3" rx="1.5"/>
+                                            <path d="M5.5,15 L18.5,15 C19.3284271,15 20,15.6715729 20,16.5 C20,17.3284271 19.3284271,18 18.5,18 L5.5,18 C4.67157288,18 4,17.3284271 4,16.5 C4,15.6715729 4.67157288,15 5.5,15 Z M5.5,10 L18.5,10 C19.3284271,10 20,10.6715729 20,11.5 C20,12.3284271 19.3284271,13 18.5,13 L5.5,13 C4.67157288,13 4,12.3284271 4,11.5 C4,10.6715729 4.67157288,10 5.5,10 Z" fill="#000000" opacity="0.3"/>
+                                        </g>
+                                    </svg>
+                                </button>
 
-                                <div class="navbar-category dropdown-list" id="navbar-category" tabindex="0">
-                                    <ul>
-                                        <% categories.filter(category => category.label==='main').forEach(category => {
-                                            const submenu = categories.filter(c => category._id.toString() === c.parent.toString() && c.label==='sub');
-                                        %>
-                                            <li>
-                                                <a href="/category/<%= category.slug %>">
-                                                    <%= category.name %>
-                                                    <% if (submenu.length > 0) { %>
-                                                        <i class="ion-android-arrow-forward"></i>
-                                                    <% } %>
-                                                </a>
-
-                                                <% if (submenu.length > 0) { %>
-                                                <ul>
-                                                    <% categories.filter(category => category.label==='sub').forEach(category => {
-                                                        const submenu = categories.filter(c => category._id.toString() === c.parent.toString() && c.label==='pro-sub');
-                                                    %>
-                                                        <li>
-                                                            <a href="/category/<%= category.slug %>">
-                                                                <%= category.name %>
-                                                                <% if (submenu.length > 0) { %>
-                                                                    <i class="ion-android-arrow-forward"></i>
-                                                                <% } %>
-                                                            </a>
-
-                                                            <% if (submenu.length > 0) { %>
-                                                            <ul>
-                                                                <% categories.filter(category => category.label==='pro-sub').forEach(category => {
-                                                                    const submenu = categories.filter(c => category._id.toString() === c.parent.toString() && c.label==='pro-sub');
-                                                                %>
-                                                                    <li>
-                                                                        <a href="/category/<%= category.slug %>">
-                                                                            <%= category.name %>
-                                                                        </a>
-                                                                    </li>
-                                                                <% }) %>
-                                                            </ul>
-                                                            <% } %>
-                                                        </li>
-                                                    <% }) %>
-                                                </ul>
-                                                <% } %>
-                                            </li>
-                                        <% }) %>
-                                    </ul>
-                                </div>
+                                <%- include('../search-categories', {categories: categories}) %> 
                             </div>
                             <input placeholder="Search here ..." type="text" class='navbar-search__input' />
-                            <button type="submit" class='navbar-search__button'><i
-                                    class="ion-ios-search-strong"></i></button>
+                            <button type="submit" class='navbar-search__button'>
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <rect x="0" y="0" width="24" height="24"/>
+                                        <path d="M14.2928932,16.7071068 C13.9023689,16.3165825 13.9023689,15.6834175 14.2928932,15.2928932 C14.6834175,14.9023689 15.3165825,14.9023689 15.7071068,15.2928932 L19.7071068,19.2928932 C20.0976311,19.6834175 20.0976311,20.3165825 19.7071068,20.7071068 C19.3165825,21.0976311 18.6834175,21.0976311 18.2928932,20.7071068 L14.2928932,16.7071068 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"/>
+                                        <path d="M11,16 C13.7614237,16 16,13.7614237 16,11 C16,8.23857625 13.7614237,6 11,6 C8.23857625,6 6,8.23857625 6,11 C6,13.7614237 8.23857625,16 11,16 Z M11,18 C7.13400675,18 4,14.8659932 4,11 C4,7.13400675 7.13400675,4 11,4 C14.8659932,4 18,7.13400675 18,11 C18,14.8659932 14.8659932,18 11,18 Z" fill="#000000" fill-rule="nonzero"/>
+                                    </g>
+                                </svg>
+                            </button>
                         </form>
                     </div>
                     <!--Main Navigation End -->
                     <!--Header Bottom Account Start -->
                     <div class="header_account_area">
+                        <div class="open-dropdown d-md-none">
+                            <a href="javascript:void(0)" class='navbar-icon-button dropdown-button'>
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <rect x="0" y="0" width="24" height="24"/>
+                                        <path d="M14.2928932,16.7071068 C13.9023689,16.3165825 13.9023689,15.6834175 14.2928932,15.2928932 C14.6834175,14.9023689 15.3165825,14.9023689 15.7071068,15.2928932 L19.7071068,19.2928932 C20.0976311,19.6834175 20.0976311,20.3165825 19.7071068,20.7071068 C19.3165825,21.0976311 18.6834175,21.0976311 18.2928932,20.7071068 L14.2928932,16.7071068 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"/>
+                                        <path d="M11,16 C13.7614237,16 16,13.7614237 16,11 C16,8.23857625 13.7614237,6 11,6 C8.23857625,6 6,8.23857625 6,11 C6,13.7614237 8.23857625,16 11,16 Z M11,18 C7.13400675,18 4,14.8659932 4,11 C4,7.13400675 7.13400675,4 11,4 C14.8659932,4 18,7.13400675 18,11 C18,14.8659932 14.8659932,18 11,18 Z" fill="#000000" fill-rule="nonzero"/>
+                                    </g>
+                                </svg>
+                            </a>
+                            <div class="dropdown-list" id="mobile-search-area">
+                                <form action="#" class="navbar-search">
+                                    <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                                    <input placeholder="Search here ..." type="text" class='navbar-search__input' />
+                                </form>
+                            </div>
+                        </div>
                         <!--Cart info Start -->
                         <div class="cart-info d-flex mt-0">
                             <div class="mini-cart-warp open-dropdown">
-                                <a href="javascript:void(0)" class="count-cart dropdown-button">
+                                <a href="javascript:void(0)" class="dropdown-button cart-icon">
+                                    <span class='me-2'>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none">
+                                            <path opacity="0.25" d="M3.19406 11.1644C3.09247 10.5549 3.56251 10 4.18045 10H19.8195C20.4375 10 20.9075 10.5549 20.8059 11.1644L19.4178 19.4932C19.1767 20.9398 17.9251 22 16.4586 22H7.54138C6.07486 22 4.82329 20.9398 4.58219 19.4932L3.19406 11.1644Z" fill="#7E8299"/>
+                                            <path d="M2 9.5C2 8.67157 2.67157 8 3.5 8H20.5C21.3284 8 22 8.67157 22 9.5C22 10.3284 21.3284 11 20.5 11H3.5C2.67157 11 2 10.3284 2 9.5Z" fill="#7E8299"/>
+                                            <path d="M10 13C9.44772 13 9 13.4477 9 14V18C9 18.5523 9.44772 19 10 19C10.5523 19 11 18.5523 11 18V14C11 13.4477 10.5523 13 10 13Z" fill="#7E8299"/>
+                                            <path d="M14 13C13.4477 13 13 13.4477 13 14V18C13 18.5523 13.4477 19 14 19C14.5523 19 15 18.5523 15 18V14C15 13.4477 14.5523 13 14 13Z" fill="#7E8299"/>
+                                            <g opacity="0.25">
+                                            <path d="M10.7071 3.70711C11.0976 3.31658 11.0976 2.68342 10.7071 2.29289C10.3166 1.90237 9.68342 1.90237 9.29289 2.29289L4.29289 7.29289C3.90237 7.68342 3.90237 8.31658 4.29289 8.70711C4.68342 9.09763 5.31658 9.09763 5.70711 8.70711L10.7071 3.70711Z" fill="#7E8299"/>
+                                            <path d="M13.2929 3.70711C12.9024 3.31658 12.9024 2.68342 13.2929 2.29289C13.6834 1.90237 14.3166 1.90237 14.7071 2.29289L19.7071 7.29289C20.0976 7.68342 20.0976 8.31658 19.7071 8.70711C19.3166 9.09763 18.6834 9.09763 18.2929 8.70711L13.2929 3.70711Z" fill="#7E8299"/>
+                                            </g>
+                                        </svg>
+                                    </span>
+                                    <span class='total d-none d-md-block'>BDT 1500</span>
                                     <span class="item-quantity-tag">02</span>
                                 </a>
                                 <div class="mini-cart-content dropdown-list" tabindex="0">
@@ -88,187 +87,71 @@
                                         <li class="single-shopping-cart">
                                             <div class="shopping-cart-img">
                                                 <a href="single-product.html"><img alt=""
-                                                        src="public/frontend/assets/images/product-image/mini-cart/1.jpg" /></a>
+                                                        src="/public/frontend/assets/images/product-image/mini-cart/1.jpg" /></a>
                                             </div>
                                             <div class="shopping-cart-title">
                                                 <h4><a href="single-product.html">Juicy Couture...</a></h4>
                                                 <span>$9.00 x 2</span>
                                                 <div class="shopping-cart-delete">
-                                                    <a href="#"><i class="ion-android-cancel"></i></a>
+                                                    <a href="#">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                                            <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="#000000">
+                                                                <rect fill="#000000" x="0" y="7" width="16" height="2" rx="1"/>
+                                                                <rect fill="#000000" opacity="0.5" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1"/>
+                                                            </g>
+                                                        </svg>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="single-shopping-cart">
                                             <div class="shopping-cart-img">
                                                 <a href="single-product.html"><img alt=""
-                                                        src="public/frontend/assets/images/product-image/mini-cart/2.jpg" /></a>
+                                                        src="/public/frontend/assets/images/product-image/mini-cart/2.jpg" /></a>
                                             </div>
                                             <div class="shopping-cart-title">
                                                 <h4><a href="single-product.html">Water and Wind...</a></h4>
                                                 <span>$11.00 x 1</span>
                                                 <div class="shopping-cart-delete">
-                                                    <a href="#"><i class="ion-android-cancel"></i></a>
+                                                    <a href="#">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                                            <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="#000000">
+                                                                <rect fill="#000000" x="0" y="7" width="16" height="2" rx="1"/>
+                                                                <rect fill="#000000" opacity="0.5" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1"/>
+                                                            </g>
+                                                        </svg>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </li>
                                     </ul>
                                     <div class="shopping-cart-total">
-                                        <h4>Subtotal : <span>$20.00</span></h4>
-                                        <h4>Shipping : <span>$7.00</span></h4>
-                                        <h4>Taxes : <span>$0.00</span></h4>
-                                        <h4 class="shop-total">Total : <span>$27.00</span></h4>
+                                        <p>Subtotal : <span>$20.00</span></p>
+                                        <p>Shipping : <span>$7.00</span></p>
+                                        <p>Taxes : <span>$0.00</span></p>
+                                        <p class="shop-total">Total : <span>$27.00</span></p>
                                     </div>
                                     <div class="shopping-cart-btn text-center">
                                         <a class="default-btn" href="checkout.html">checkout</a>
                                     </div>
                                 </div>
                             </div>
-                            <div>
-                                <a href="/profile" class='navbar-icon-button'>
-                                    <i class="ion-android-person"></i>
-                                </a>
-                            </div>
                         </div>
                         <!--Cart info End -->
+                        <div>
+                            <a href="/profile" class='navbar-icon-button'>
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                        <polygon points="0 0 24 0 24 24 0 24"/>
+                                        <path d="M12,11 C9.790861,11 8,9.209139 8,7 C8,4.790861 9.790861,3 12,3 C14.209139,3 16,4.790861 16,7 C16,9.209139 14.209139,11 12,11 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"/>
+                                        <path d="M3.00065168,20.1992055 C3.38825852,15.4265159 7.26191235,13 11.9833413,13 C16.7712164,13 20.7048837,15.2931929 20.9979143,20.2 C21.0095879,20.3954741 20.9979143,21 20.2466999,21 C16.541124,21 11.0347247,21 3.72750223,21 C3.47671215,21 2.97953825,20.45918 3.00065168,20.1992055 Z" fill="#000000" fill-rule="nonzero"/>
+                                    </g>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- mobile menu -->
-            <div class="mobile-menu-area">
-                <div class="mobile-menu">
-                    <nav id="mobile-menu-active">
-                        <ul class="menu-overflow">
-                            <li>
-                                <a href="index.html">HOME</a>
-                                <ul>
-                                    <li>
-                                        <a href="#">Home Organic</a>
-                                        <ul>
-                                            <li><a href="index.html">Organic 1</a></li>
-                                            <li><a href="index-2.html">Organic 2</a></li>
-                                            <li><a href="index-3.html">Organic 3</a></li>
-                                            <li><a href="index-4.html">Organic 4</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#">Home Cosmetic</a>
-                                        <ul>
-                                            <li><a href="index-5.html">Cosmetic 1</a></li>
-                                            <li><a href="index-6.html">Cosmetic 2</a></li>
-                                            <li><a href="index-7.html">Cosmetic 3</a></li>
-                                            <li><a href="index-8.html">Cosmetic 4</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#">Home Digital</a>
-                                        <ul>
-                                            <li><a href="index-9.html">Digital 1</a></li>
-                                            <li><a href="index-10.html">Digital 2</a></li>
-                                            <li><a href="index-11.html">Digital 3</a></li>
-                                            <li><a href="index-12.html">Digital 4</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#">Home Furniture</a>
-                                        <ul>
-                                            <li><a href="index-13.html">Furniture 1</a></li>
-                                            <li><a href="index-14.html">Furniture 2</a></li>
-                                            <li><a href="index-15.html">Furniture 3</a></li>
-                                            <li><a href="index-16.html">Furniture 4</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#">Home Medical</a>
-                                        <ul>
-                                            <li><a href="index-17.html">Medical 1</a></li>
-                                            <li><a href="index-18.html">Medical 2</a></li>
-                                            <li><a href="index-19.html">Medical 3</a></li>
-                                            <li><a href="index-20.html">Medical 4</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Shop</a>
-                                <ul>
-                                    <li>
-                                        <a href="#">Shop Grid</a>
-                                        <ul>
-                                            <li><a href="shop-3-column.html">Shop Grid 3 Column</a></li>
-                                            <li><a href="shop-4-column.html">Shop Grid 4 Column</a></li>
-                                            <li><a href="shop-left-sidebar.html">Shop Grid Left Sidebar</a></li>
-                                            <li><a href="shop-right-sidebar.html">Shop Grid Right Sidebar</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#">Shop List</a>
-                                        <ul>
-                                            <li><a href="shop-list.html">Shop List</a></li>
-                                            <li><a href="shop-list-left-sidebar.html">Shop List Left Sidebar</a>
-                                            </li>
-                                            <li><a href="shop-list-right-sidebar.html">Shop List Right
-                                                    Sidebar</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#">Single Shop</a>
-                                        <ul>
-                                            <li><a href="single-product.html">Shop Single</a></li>
-                                            <li><a href="single-product-variable.html">Shop Variable</a></li>
-                                            <li><a href="single-product-affiliate.html">Shop Affiliate</a></li>
-                                            <li><a href="single-product-group.html">Shop Group</a></li>
-                                            <li><a href="single-product-tabstyle-2.html">Shop Tab 2</a></li>
-                                            <li><a href="single-product-tabstyle-3.html">Shop Tab 3</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="#">Single Shop</a>
-                                        <ul>
-                                            <li><a href="single-product-slider.html">Shop Slider</a></li>
-                                            <li><a href="single-product-gallery-left.html">Shop Gallery Left</a>
-                                            </li>
-                                            <li><a href="single-product-gallery-right.html">Shop Gallery
-                                                    Right</a></li>
-                                            <li><a href="single-product-sticky-left.html">Shop Sticky Left</a>
-                                            </li>
-                                            <li><a href="single-product-sticky-right.html">Shop Sticky Right</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Pages</a>
-                                <ul>
-                                    <li><a href="about.html">About Page</a></li>
-                                    <li><a href="cart.html">Cart Page</a></li>
-                                    <li><a href="checkout.html">Checkout Page</a></li>
-                                    <li><a href="compare.html">Compare Page</a></li>
-                                    <li><a href="login.html">Login & Regiter Page</a></li>
-                                    <li><a href="my-account.html">Account Page</a></li>
-                                    <li><a href="wishlist.html">Wishlist Page</a></li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#">Blog</a>
-                                <ul>
-                                    <li><a href="blog-grid-left-sidebar.html">Blog Grid Left Sidebar</a></li>
-                                    <li><a href="blog-grid-right-sidebar.html">Blog Grid Right Sidebar</a></li>
-                                    <li><a href="blog-list-left-sidebar.html">Blog List Left Sidebar</a></li>
-                                    <li><a href="blog-list-right-sidebar.html">Blog List Right Sidebar</a></li>
-                                    <li><a href="blog-single-left-sidebar.html">Blog Single Left Sidebar</a>
-                                    </li>
-                                    <li><a href="blog-single-right-sidebar.html">Blog Single Right Sidebar</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li><a href="contact.html">Contact Us</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-            <!-- mobile menu end-->
         </div>
     </div>
 </div>

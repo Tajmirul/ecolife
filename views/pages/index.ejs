@@ -1,8 +1,8 @@
 
 <%- include('../components/banner', {banners: data.banners}) %> 
-<%- include('../components/eCom-features') %> 
-<%- include('../components/featured-category') %> 
-<%- include('../components/best-selling') %> 
-<%- include('../components/featured-products') %> 
-<%- include('../components/new-arrival') %> 
-<%- include('../components/brand.ejs') %> 
+<%- include('../components/eCom-features') %>
+<%- include('../components/ads', {ads: data.ads}) %> 
+<%- include('../components/best-selling', {bestSellingProducts: data.bestSellingProducts}) %> 
+<%- include('../components/featured-products', {featuredProducts: data.featuredProducts}) %> 
+<%- include('../components/new-arrival', {newArrivals: data.newArrivals}) %> 
+<%# include('../components/brand.ejs') %> 

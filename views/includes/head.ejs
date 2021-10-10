@@ -5,16 +5,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="_csrf" content="<%= _csrf %>">
+    
     <title><%= title %></title>
-    <!-- Favicon -->
-    <!-- <link rel="shortcut icon" type="image/x-icon" href="public/frontend/assets/images/favicon/favicon.png" /> -->
-    <!-- Google Fonts -->
-    <!-- <link
-        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800&amp;display=swap"
-        rel="stylesheet" /> -->
+    <link rel="shortcut icon" type="image/x-icon" href="/public/frontend/assets/images/favicon/favicon.png" />
 
-    <link rel="stylesheet" href="/public/frontend/assets/css/vendor/vendor.min.css">
-    <link rel="stylesheet" href="/public/frontend/assets/css/plugins/plugins.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/frontend/assets/css/all.min.css">
+
+    <link rel="stylesheet" href="/public/frontend/assets/css/plugins/meanmenu.min.css">
+    <link rel="stylesheet" href="/public/frontend/assets/css/plugins/nice-select.css">
+    <link rel="stylesheet" href="/public/frontend/assets/css/plugins/owl-carousel.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+
+    <!-- <link rel="stylesheet" href="/public/frontend/assets/css/vendor/vendor.min.css"> -->
+    <!-- <link rel="stylesheet" href="/public/frontend/assets/css/plugins/plugins.min.css"> -->
+
     <% if ( process.env.NODE_ENV === 'production') { %>
         <link rel="stylesheet" href="/public/frontend/assets/css/style.min.css">
         <link rel="stylesheet" href="/public/frontend/assets/css/responsive.min.css">
@@ -27,9 +34,9 @@
 
 
     <!--===== Main Css Files =====-->
-    <!-- <link rel="stylesheet" href="public/frontend/assets/css/style.css" /> -->
+    <!-- <link rel="stylesheet" href="/public/frontend/assets/css/style.css" /> -->
     <!-- ===== Responsive Css Files ===== -->
-    <!-- <link rel="stylesheet" href="public/frontend/assets/css/responsive.css" /> -->
+    <!-- <link rel="stylesheet" href="/public/frontend/assets/css/responsive.css" /> -->
 </head>
 
 <body class="home-4">

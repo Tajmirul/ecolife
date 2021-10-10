@@ -13,6 +13,8 @@
             <h1>Advertisement Not Found</h1>
         <% } else { %>
             <form id="add-ad-form" action="<%= `/${process.env.ADMIN_PANEL_PATH}/ad/${data.editMode ? 'edit' : 'add'}` %>">
+                <input type="hidden" name="_csrf" value="<%= _csrf %>">
+
                 <div class="row">
                     <div class="col-md-6 col-lg-5">
                         <% if (data.editMode) { %>

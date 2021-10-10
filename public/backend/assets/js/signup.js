@@ -109,6 +109,7 @@
 
                 validator.revalidateField('password');
 
+                const _csrf = e.target._csrf.value;
                 const firstName = e.target.firstName.value;
                 const lastName = e.target.lastName.value;
                 const userName = e.target.userName.value;
@@ -127,6 +128,9 @@
                         axios({
                             url: '/' + ADMIN_PANEL_PATH + '/auth/signup',
                             method: 'POST',
+                            headers: {
+                                'CSRF-Token': _csrf,
+                            },
                             data: { firstName, lastName, userName, email, password, confirmPassword },
                         }).then(function (res) {
                             if (res.status === 200) {
@@ -139,7 +143,7 @@
                                         confirmButton: "btn btn-primary"
                                     }
                                 }).then(() => {
-                                    // window.location.replace(`/${ADMIN_PANEL_PATH}`)
+                                    window.location.replace(`/${ADMIN_PANEL_PATH}`)
                                 });
                             }
                         }).catch(function (err) {

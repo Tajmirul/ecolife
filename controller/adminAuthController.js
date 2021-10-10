@@ -23,19 +23,29 @@ module.exports.postSignin = async (req, res, next) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
+        if (!user) {
+            throwError('User not found', 404, true);
+        }
         const passwordMatched = await bcrypt.compare(password, user.password);
-        if (passwordMatched && user.isAdmin && user.isActive) {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            await req.session.save((err) => {
-                if (err) {
-                    console.log(err);
-                }
-                res.status(200).json({ message: 'sign in successful' });
-            });
-        } else {
+        if (!passwordMatched) {
             throwError('Credentials do not match', 422, true);
         }
+
+        if (!user.isAdmin) {
+            throwError('You are not an admin', 401, true);
+        }
+        if (!user.isActive) {
+            throwError('You account is not active', 401, true);
+        }
+        req.session.isLoggedIn = true;
+        req.session.user = user;
+        await req.session.save((err) => {
+            if (err) {
+                return console.log(err);
+            }
+            return res.status(200).json({ message: 'sign in successful' });
+        });
+        return null;
     } catch (err) {
         next(err);
     }

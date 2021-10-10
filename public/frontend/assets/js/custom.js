@@ -9,4 +9,10 @@ $(document).ready(function () {
     //     // const target = $($(this).data('target'));
     //     // target.addClass('active');
     // })
+
+    window.addEventListener('resize', (e) => {
+        // if (window.innerWidth > 768) {
+        // $('.navbar-search').clone().html('#mobile-search-area')
+        // }
+    })
 })
