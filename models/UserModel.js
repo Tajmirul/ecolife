@@ -13,12 +13,12 @@ const userSchema = new mongoose.Schema({
     isAdmin: { type: Boolean, default: false },
     isGuest: { type: Boolean, default: false },
 
+    emailVerified: { type: Boolean, default: false },
     resetToken: String,
     resetTokenExpire: Date,
 
     cart: {
-        total: { type: Number, default: 0 },
-        item: [{
+        items: [{
             productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
             quantity: { type: Number, required: true },
         }],
@@ -29,5 +29,72 @@ const userSchema = new mongoose.Schema({
         required: true,
     }],
 }, { timestamps: true });
+
+userSchema.methods.cartTotal = function () {
+    let total = 0;
+    this.populate('cart.items.productId');
+    this.cart.items.forEach((item) => {
+        const product = item.productId;
+        total += (product.price - product.price * (product.discount / 100)) * item.quantity;
+    });
+    return Math.round(total);
+};
+
+userSchema.methods.addToCart = function (productId, quantity = 1) {
+    const updatedCartItems = [...this.cart.items];
+    const productIndex = updatedCartItems.findIndex(
+        (item) => item.productId._id.toString() === productId.toString(),
+    );
+
+    if (productIndex >= 0) {
+        updatedCartItems[productIndex].quantity += quantity;
+    } else {
+        updatedCartItems.push({ productId, quantity });
+    }
+    this.cart = { items: updatedCartItems };
+    return this.save();
+};
+
+userSchema.methods.removeFromCart = function async(productId) {
+    const updatedCartItems = this.cart.items;
+    const productIndex = updatedCartItems.findIndex(
+        (item) => item.productId.toString() === productId,
+    );
+    updatedCartItems.splice(productIndex, 1);
+    this.cart = { items: updatedCartItems };
+    return this.save();
+};
+
+userSchema.methods.clearCart = function () {
+    this.cart = { items: [] };
+    this.save();
+};
+
+userSchema.methods.addToWishList = function (productId) {
+    const updatedWishListItems = [...this.wishList];
+    const productIndex = updatedWishListItems.findIndex(
+        (item) => item.toString() === productId.toString(),
+    );
+
+    if (productIndex >= 0) {
+        return this;
+    }
+    updatedWishListItems.push(productId);
+    this.wishList = [...updatedWishListItems];
+    return this.save();
+};
+
+userSchema.methods.removeFromWishlist = function (productId) {
+    const updatedWishListItems = this.wishList;
+    const productIndex = updatedWishListItems.findIndex(
+        (item) => item.toString() === productId,
+    );
+    if (!productIndex) {
+        return this;
+    }
+    updatedWishListItems.splice(productIndex, 1);
+    this.wishList = [...updatedWishListItems];
+    return this.save();
+};
 
 module.exports = mongoose.model('User', userSchema);

@@ -4361,7 +4361,7 @@ a.quick_view:hover {
 
 .rating-product i {
     overflow: hidden;
-    font-size: 18px;
+    font-size: 14px;
     color: #fdd835;
 }
 
@@ -4499,10 +4499,6 @@ a.quick_view:hover {
     visibility: visible;
     -webkit-transform: translateY(0) translateZ(0);
     transform: translateY(0) translateZ(0);
-}
-
-.rating-product {
-    margin-bottom: 6px;
 }
 
 .home-furniture .add-to-link ul {
@@ -6644,7 +6640,7 @@ a.read-more-btn i {
     float: left;
     margin: 0 10px 0 0;
     position: relative;
-    width: 85px;
+    width: 58px;
 }
 
 .shopping-cart-img a img {
@@ -6703,7 +6699,6 @@ a.read-more-btn i {
 .shopping-cart-title {
     overflow: hidden;
     position: relative;
-    padding: 0 20px 0 0;
 }
 
 .shopping-cart-title h4 a {
@@ -7154,7 +7149,8 @@ a.read-more-btn i {
     width: 80px;
 }
 
-.pro-details-cart a {
+.pro-details-cart a,
+.pro-details-cart button {
     position: relative;
     padding: 0 55px;
     line-height: 48px;
@@ -7171,7 +7167,8 @@ a.read-more-btn i {
     margin-left: 10px;
 }
 
-.home-cosmatics .pro-details-cart a {
+.home-cosmatics .pro-details-cart a,
+.home-cosmatics .pro-details-cart button {
     background: #c0b07d;
 }
 
@@ -7346,8 +7343,7 @@ a.read-more-btn i {
     background: #fff;
     line-height: 24px;
     text-align: left;
-    padding: 40px 30px 30px 30px;
-    border: 1px solid #ebebeb;
+    border-top: 1px solid #ebebeb;
 }
 
 .description-review-topbar.nav {
@@ -7356,7 +7352,6 @@ a.read-more-btn i {
     display: block;
     margin-bottom: 0;
     margin: auto;
-    text-align: center;
     margin-top: -6px;
 }
 
@@ -7367,9 +7362,8 @@ a.read-more-btn i {
     line-height: 24px;
     color: #888;
     padding: 0 0 15px 0;
-    margin: 0 30px;
-    font-size: 18px;
-    font-weight: 700;
+    margin-right: 30px;
+    font-size: 16px;
     position: relative;
     -webkit-transition: all 300ms linear;
     -moz-transition: all 300ms linear;
@@ -7438,7 +7432,8 @@ a.read-more-btn i {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    margin: 0 0 50px;
+    border-bottom: 1px solid #e9e9e9;
+    padding: 10px 0;
 }
 
 .single-review .review-img {

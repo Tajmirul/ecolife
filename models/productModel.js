@@ -24,9 +24,10 @@ const productSchema = new mongoose.Schema({
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
+            required: true,
         },
         rating: { type: Number, required: true },
-        description: { type: String, required: true },
+        description: String,
     }],
 }, { timestamps: true });
 

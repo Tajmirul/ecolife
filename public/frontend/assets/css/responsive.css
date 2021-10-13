@@ -454,19 +454,12 @@
         margin-bottom: 50px;
     }
 
-    .single-review {
-        display: block;
-    }
-
     .ratting-form-wrapper {
         padding-left: 0;
     }
 
     .description-review-bottom .product-description-wrapper p {
         width: 100%;
-    }
-    .single-review .review-img {
-        margin: 0 0px 20px 0;
     }
 
     .grand-totall {

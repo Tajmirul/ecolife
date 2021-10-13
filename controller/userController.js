@@ -1,46 +1,61 @@
-const Banner = require('../models/bannerModel');
-const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
-const Ad = require('../models/adModel');
+const { errorValidation } = require('../utils/error-validation');
 
-module.exports.getIndex = async (req, res, next) => {
+module.exports.postRateProduct = async (req, res, next) => {
     try {
-        const ads = await Ad.find();
-        const banners = await Banner.find().limit(4);
-        const categories = await Category.find();
-        const products = await Product.find().populate('category');
-        const bestSellingProducts = products.sort((a, b) => b.totalSale - a.totalSale);
-        const featuredProducts = products.filter((product) => product.featured).slice(0, 5);
-        const newArrivals = products.filter((product) => product.flag.toLowerCase() === 'new').slice(0, 10);
+        errorValidation(req, false);
 
-        res.render('layouts/layout', {
-            title: 'Home - Ecolife',
-            page: 'pages/index',
-            path: '/',
+        const { productId, rating, description } = req.body;
+        const product = await Product.findById(productId);
+        if (!product) {
+            req.flash('error', 'Product Not found');
+            return next();
+        }
+        product.reviews = [{ userId: req.user._id, rating, description }, ...product.reviews];
+        try {
+            await product.save();
+        } catch (err) {
+            console.log(err);
+            req.flash('error', 'Unable to save review');
+        }
 
-            data: {
-                banners, categories, bestSellingProducts, ads, featuredProducts, newArrivals,
-            },
-        });
+        return res.redirect(req.headers.referer);
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
-module.exports.getProduct = async (req, res, next) => {
+module.exports.postAddToCart = async (req, res, next) => {
     try {
-        const { slug } = req.params;
+        const { productId, quantity } = req.body;
 
-        const categories = await Category.find();
-        const product = await Product.findOne({ slug }).populate('category');
+        if (!req.user) {
+            return res.redirect('/signin');
+        }
+        req.user.addToCart(productId, +quantity);
+        return res.status(200).redirect(req.headers.referer);
+    } catch (err) {
+        return next(err);
+    }
+};
 
-        res.render('layouts/layout', {
-            title: `${product.title} - ${product.category.name}`,
-            page: 'pages/product-details',
-            path: '/product',
+module.exports.postRemoveFromCart = async (req, res, next) => {
+    try {
+        const { productId } = req.body;
 
-            data: { categories, product },
-        });
+        if (!req.user) {
+            return res.redirect('/signin');
+        }
+        req.user.removeFromCart(productId);
+        return res.redirect(req.headers.referer);
+    } catch (err) {
+        return next(err);
+    }
+};
+
+module.exports.getCartItems = async (req, res, next) => {
+    try {
+        console.log('cart items');
     } catch (err) {
         next(err);
     }

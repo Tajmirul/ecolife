@@ -12,9 +12,11 @@
     },
     "rules": {
         "indent": ["error", 4],
+        "linebreak-style": "off",
         "no-unused-vars": "warn",
         "arrow-parens": "warn",
         "no-console": "off",
-        "no-underscore-dangle": "off"
+        "no-underscore-dangle": "off",
+        "func-names": "off"
     }
 }

@@ -2,7 +2,7 @@
 
 module.exports.alreadyLoggedIn = (req, res, next) => {
     if (req.session?.user) {
-        return res.redirect(`/${process.env.ADMIN_PANEL_PATH}`);
+        return res.redirect(req.headers.referer);
     }
     return next();
 };

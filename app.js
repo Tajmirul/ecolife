@@ -11,7 +11,8 @@ const cookieParser = require('cookie-parser');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const userRouter = require('./routes/userRoutes');
 const adminRouter = require('./routes/adminRoutes');
-const userAuthRouter = require('./routes/userAuthRouter');
+const shopRouter = require('./routes/shopRoutes');
+const userAuthRouter = require('./routes/userAuthRoutes');
 const adminAuthRouter = require('./routes/adminAuthRouter');
 const User = require('./models/UserModel');
 const { get404, getError } = require('./controller/errorController');
@@ -68,20 +69,24 @@ app.use(multer({ storage: fileStorage, fileFilter }).single('image'));
 // * get user from session
 app.use(async (req, res, next) => {
     try {
+        res.locals.unverifiedEmail = false;
         const sessionUser = req.session.user;
-        const user = await User.findOne({ _id: sessionUser?._id });
+        const user = await User.findOne({ _id: sessionUser?._id }).populate('cart.items.productId');
 
         if (!user) {
             return next();
+        }
+        user.cart.total = user.cartTotal();
+        if (!user.emailVerified) {
+            res.locals.unverifiedEmail = true;
         }
 
         req.user = user;
         req.isLoggedIn = true;
         return next();
     } catch (err) {
-        next(err);
+        return next(err);
     }
-    return null;
 });
 
 app.use((req, res, next) => {
@@ -91,6 +96,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(shopRouter);
 app.use(userRouter);
 app.use(userAuthRouter);
 app.use(`/${process.env.ADMIN_PANEL_PATH}/auth`, adminAuthRouter);
