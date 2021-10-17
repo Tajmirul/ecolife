@@ -673,7 +673,7 @@ button {
 }
 
 .modal {
-    top: 50px;
+    top: 60px;
 }
 
 .modal .pro-details-size-color {
@@ -6388,22 +6388,20 @@ a.read-more-btn i {
 /*----------------------------------------*/
 
 .select-shoing-wrap {
-    flex: 0 0 40%;
-    max-width: 40%;
     display: -webkit-flex;
     display: -moz-flex;
     display: -ms-flex;
     display: -o-flex;
     display: flex;
+    white-space: nowrap;
 }
 
-.shop-tab.nav {
-    flex: 0 0 60%;
-    max-width: 60%;
-}
+.shop-tab.nav {}
 
 .shop-top-bar {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .shop-top-bar .nice-select {
@@ -6471,10 +6469,7 @@ a.read-more-btn i {
     max-width: 20%;
 }
 
-.shop-select {
-    flex: 0 0 80%;
-    max-width: 80%;
-}
+.shop-select {}
 
 .shot-product p {
     line-height: 20px;
@@ -7026,7 +7021,7 @@ a.read-more-btn i {
 
 .read-review a.reviews:before {
     display: inline-block;
-    font-family: "Font Awesome 5 Free";
+    font-family: "Font Awesome 5 Pro";
     font-size: 15px;
     font-weight: 400;
     line-height: 1;

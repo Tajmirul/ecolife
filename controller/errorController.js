@@ -15,7 +15,6 @@ module.exports.getError = (error, req, res, next) => {
         return res.status(error.status || 500).json({ message: error.message });
     }
 
-    console.log(req);
     req.flash('error', error.message);
     return res.status(error.status || 500).redirect(req.headers.referer || req.originalUrl);
 

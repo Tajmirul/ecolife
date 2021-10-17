@@ -293,6 +293,18 @@ a.quick_view:hover {
     color: #000 !important;
 }
 
+.button--link {
+    font-weight: 400;
+    font-size: 12px;
+    margin-top: 10px;
+    display: block;
+    text-align: center;
+    color: #222;
+    width: 100%;
+    border: none;
+    background: transparent;
+}
+
 /* featured product */
 
 .featured-product {

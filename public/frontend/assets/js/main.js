@@ -1,3 +1,5 @@
+'use strict';
+
 $(document).ready(() => {
     $('.slider-active-3').owlCarousel({
         loop: true,
@@ -120,4 +122,31 @@ $(document).ready(() => {
             $('.sticky-nav').removeClass('menu_fixed animated fadeInDown');
         }
     });
+
+    let productModal;
+    $('.quick_view').on('click', async function (e) {
+        e.preventDefault();
+
+        const productId = $(this).data('productid');
+        try {
+            const res = await fetch(`/product-modal/${productId}`);
+            const data = await res.text();
+            $('body').append(data);
+            const productModalEl = document.getElementById('productModal');
+            const productModal = new bootstrap.Modal(productModalEl);
+
+            productModal.show();
+            productModalEl.addEventListener('hidden.bs.modal', function (event) {
+                productModalEl.remove();
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    });
+
+    // handle search term
+    $('[name=searchTerm]').val(sessionStorage.getItem('searchTerm'));
+    $('[name=searchTerm]').on('keyup', function(e) {
+        sessionStorage.setItem('searchTerm', e.target.value);
+    })
 })

@@ -14,8 +14,7 @@
                 <div class="col col-md-10">
                     <!--Main Navigation Start -->
                     <div class="main-navigation d-none d-lg-block">
-                        <form action="#" class="navbar-search">
-                            <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                        <form action="/search" method="get" class="navbar-search">
                             <div class='open-dropdown' data-dropdown-open-on="focus">
                                 <button type="button"
                                     class='navbar-search__button navbar-search__button--hover dropdown-button me-3'
@@ -31,7 +30,7 @@
 
                                 <%- include('../search-categories', {categories: categories}) %> 
                             </div>
-                            <input placeholder="Search here ..." type="text" class='navbar-search__input' />
+                            <input placeholder="Search here ..." type="text" name="searchTerm" class='navbar-search__input' />
                             <button type="submit" class='navbar-search__button'>
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                     <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -84,54 +83,66 @@
                                         <span class="item-quantity-tag"><%= user.cart.items.length %></span>
                                     </a>
                                     <div class="mini-cart-content dropdown-list" tabindex="0">
-                                        <ul>
-                                            <% user.cart.items.forEach(item => { %>
-                                                <% const product = item.productId %>
-                                                <li class="single-shopping-cart">
-                                                    <div class="shopping-cart-img">
-                                                        <a href="/product/<%= product.slug %>"><img alt="<%= product.title %>"
-                                                                src="/<%= product.images[0].thumb %>" /></a>
-                                                    </div>
-                                                    <div class="align-items-center d-flex justify-content-between shopping-cart-title">
-                                                        <div>
-                                                            <h4>
-                                                                <a href="/product/<%= product.slug %>">
-                                                                    <%= product.title.substring(0, 30) %>
-                                                                    <%= product.title.length > 30 && '...' %>
-                                                                </a>
-                                                            </h4>
-                                                            <span><%= Math.round(product.price - product.price * product.discount / 100) %> x <%= item.quantity %></span>
+                                        <% if (user.cart.items.length > 0) { %>
+                                            <ul>
+                                                <% user.cart.items.forEach(item => { %>
+                                                    <% const product = item.productId %>
+                                                    <li class="single-shopping-cart">
+                                                        <div class="shopping-cart-img">
+                                                            <a href="/product/<%= product.slug %>"><img alt="<%= product.title %>"
+                                                                    src="/<%= product.images[0].thumb %>" /></a>
                                                         </div>
-                                                        <div class="shopping-cart-delete">
-                                                            <form action="/remove-from-cart" method="post">
-                                                                <input type="hidden" name="_csrf" value="<%= _csrf %>">
-                                                                <input type="hidden" name="productId" value="<%= product._id %>">
-                                                                <button type="submit" class="bg-transparent border-0">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
-                                                                        height="24px" viewBox="0 0 24 24" version="1.1">
-                                                                        <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)"
-                                                                            fill="#000000">
-                                                                            <rect fill="#000000" x="0" y="7" width="16" height="2" rx="1" />
-                                                                            <rect fill="#000000" opacity="0.5"
-                                                                                transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) "
-                                                                                x="0" y="7" width="16" height="2" rx="1" />
-                                                                        </g>
-                                                                    </svg>
-                                                                </button>
-                                                            </form>
+                                                        <div class="align-items-center d-flex justify-content-between shopping-cart-title">
+                                                            <div>
+                                                                <h4>
+                                                                    <a href="/product/<%= product.slug %>">
+                                                                        <%= product.title.substring(0, 30) %>
+                                                                        <%= product.title.length > 30 && '...' %>
+                                                                    </a>
+                                                                </h4>
+                                                                <span><%= Math.round(product.price - product.price * product.discount / 100) %> x <%= item.quantity %></span>
+                                                            </div>
+                                                            <div class="shopping-cart-delete">
+                                                                <form action="/remove-from-cart" method="post">
+                                                                    <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                                                                    <input type="hidden" name="productId" value="<%= product._id %>">
+                                                                    <button type="submit" class="bg-transparent border-0">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+                                                                            height="24px" viewBox="0 0 24 24" version="1.1">
+                                                                            <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)"
+                                                                                fill="#000000">
+                                                                                <rect fill="#000000" x="0" y="7" width="16" height="2" rx="1" />
+                                                                                <rect fill="#000000" opacity="0.5"
+                                                                                    transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) "
+                                                                                    x="0" y="7" width="16" height="2" rx="1" />
+                                                                            </g>
+                                                                        </svg>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
-                                            <% }) %>
-                                        </ul>
-                                        <div class="shopping-cart-total">
-                                            <p>Subtotal : <span>BDT <%= user.cart.total %></span></p>
-                                            <p>Shipping : <span>BDT 40</span></p>
-                                            <p class="shop-total">Total : <span>BDT <%= user.cart.total + 40 %></span></p>
-                                        </div>
-                                        <div class="shopping-cart-btn text-center">
-                                            <a class="default-btn" href="checkout.html">checkout</a>
-                                        </div>
+                                                    </li>
+                                                <% }) %>
+                                            </ul>
+                                            <div class="shopping-cart-total">
+                                                <p>Subtotal : <span>BDT <%= user.cart.total %></span></p>
+                                                <p>Shipping : <span>BDT 40</span></p>
+                                                <p class="shop-total">Total : <span>BDT <%= user.cart.total + 40 %></span></p>
+                                            </div>
+                                            <div class="shopping-cart-btn text-center">
+                                                <a class="default-btn" href="/checkout">checkout</a>
+                                            </div>
+                                            <div>
+                                                <form action="/clear-cart" method="post">
+                                                    <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                                                    <button class="button--link">Clear Cart</button>
+                                                </form>
+                                            </div>
+                                        <% } else { %>
+                                            <div style="display: flex;align-items: center;justify-content: center;height: 100px;">
+                                                <h5>Cart is empty</h5>
+                                            </div>
+                                        <% } %>
                                     </div>
                                 </div>
                             <% } %>

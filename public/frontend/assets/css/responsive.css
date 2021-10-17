@@ -47,10 +47,7 @@
     }
     .header_account_area {
         margin-top: 0;
-        margin-right: 70px;
-    }
-    .home-4 .header_account_area {
-        margin-right: 40px;
+        margin-right: 0;
     }
     .mean-container a.meanmenu-reveal {
     right: 15px;

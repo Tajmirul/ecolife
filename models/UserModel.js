@@ -67,33 +67,33 @@ userSchema.methods.removeFromCart = function async(productId) {
 
 userSchema.methods.clearCart = function () {
     this.cart = { items: [] };
-    this.save();
+    return this.save();
 };
 
 userSchema.methods.addToWishList = function (productId) {
-    const updatedWishListItems = [...this.wishList];
-    const productIndex = updatedWishListItems.findIndex(
+    const updatedWishList = [...this.wishList];
+    const productIndex = updatedWishList.findIndex(
         (item) => item.toString() === productId.toString(),
     );
 
     if (productIndex >= 0) {
         return this;
     }
-    updatedWishListItems.push(productId);
-    this.wishList = [...updatedWishListItems];
+    updatedWishList.push(productId);
+    this.wishList = [...updatedWishList];
     return this.save();
 };
 
 userSchema.methods.removeFromWishlist = function (productId) {
-    const updatedWishListItems = this.wishList;
-    const productIndex = updatedWishListItems.findIndex(
+    const updatedWishList = this.wishList;
+    const productIndex = updatedWishList.findIndex(
         (item) => item.toString() === productId,
     );
-    if (!productIndex) {
+    if (productIndex < 0) {
         return this;
     }
-    updatedWishListItems.splice(productIndex, 1);
-    this.wishList = [...updatedWishListItems];
+    updatedWishList.splice(productIndex, 1);
+    this.wishList = [...updatedWishList];
     return this.save();
 };
 

@@ -31,4 +31,14 @@ const productSchema = new mongoose.Schema({
     }],
 }, { timestamps: true });
 
+productSchema.methods.addReview = function ({ userId, rating, description }) {
+    this.reviews = [{ userId, rating, description }, ...this.reviews];
+    const newRating = this.reviews.reduce(
+        (previous, current) => previous + current.rating, 0,
+    );
+    this.rating = (newRating / this.reviews.length).toFixed(1);
+
+    return this.save();
+};
+
 module.exports = mongoose.model('Product', productSchema);

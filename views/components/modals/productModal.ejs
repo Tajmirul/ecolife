@@ -1,87 +1,61 @@
+<%- include('../../includes/functions') %> 
+<% product = data.product %>
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog">
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">x</span></button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"><i class="fal fa-times"></i></span></button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-5 col-sm-12 col-xs-12">
-                        <div class="tab-content quickview-big-img">
-                            <div id="pro-1" class="tab-pane fade show active">
-                                <img src="/public/frontend/assets/images/product-image/organic/product-11.jpg" alt="" />
-                            </div>
-                            <div id="pro-2" class="tab-pane fade">
-                                <img src="/public/frontend/assets/images/product-image/organic/product-9.jpg" alt="" />
-                            </div>
-                            <div id="pro-3" class="tab-pane fade">
-                                <img src="/public/frontend/assets/images/product-image/organic/product-20.jpg" alt="" />
-                            </div>
-                            <div id="pro-4" class="tab-pane fade">
-                                <img src="/public/frontend/assets/images/product-image/organic/product-19.jpg" alt="" />
+                        <div class="quickview-big-img">
+                            <div class="tab-pane fade show active">
+                                <img src="/<%= product.images[0].normal %>" alt="" />
                             </div>
                         </div>
                         <!-- Thumbnail Large Image End -->
-                        <!-- Thumbnail Image End -->
-                        <div class="quickview-wrap mt-15">
-                            <div class="quickview-slide-active owl-carousel nav owl-nav-style owl-nav-style-2"
-                                role="tablist">
-                                <a class="active" data-bs-toggle="tab" href="#pro-1"><img
-                                        src="/public/frontend/assets/images/product-image/organic/product-11.jpg" alt="" /></a>
-                                <a data-bs-toggle="tab" href="#pro-2"><img
-                                        src="/public/frontend/assets/images/product-image/organic/product-9.jpg" alt="" /></a>
-                                <a data-bs-toggle="tab" href="#pro-3"><img
-                                        src="/public/frontend/assets/images/product-image/organic/product-20.jpg" alt="" /></a>
-                                <a data-bs-toggle="tab" href="#pro-4"><img
-                                        src="/public/frontend/assets/images/product-image/organic/product-19.jpg" alt="" /></a>
-                            </div>
-                        </div>
                     </div>
                     <div class="col-md-7 col-sm-12 col-xs-12">
                         <div class="product-details-content quickview-content">
-                            <h2>Originals Kaval Windbr</h2>
-                            <p class="reference">Reference:<span> demo_17</span></p>
+                            <h2><%= product.title %></h2>
                             <div class="pro-details-rating-wrap">
-                                <div class="rating-product">
-                                    <ion-icon name="star"></ion-icon>
-                                    <ion-icon name="star"></ion-icon>
-                                    <ion-icon name="star"></ion-icon>
-                                    <ion-icon name="star"></ion-icon>
-                                    <ion-icon name="star"></ion-icon>
-                                </div>
-                                <span class="read-review"><a class="reviews" href="#">Read reviews (1)</a></span>
+                                <%- include('../../includes/rating', {rating: product.rating, text: product.reviews.length}) %>
+                                <span class="read-review">
+                                    <a class="reviews" href="/product/<%= product.slug %>">Read reviews (<%= product.reviews.length %>)</a>
+                                </span>
                             </div>
                             <div class="pricing-meta">
                                 <ul>
-                                    <li class="old-price not-cut">€18.90</li>
+                                    <% if (product.discount) { %>
+                                        <li class="old-price fs-6">BDT <%= product.price %></li>
+                                        <li class="current-price fs-3 fw-normal"><%= discount(product.price, product.discount) %></li>
+                                    <% } else { %>
+                                        <li class="old-price not-cut">BDT <%= product.price %></li>
+                                    <% } %>
                                 </ul>
                             </div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisic elit eiusm tempor incidid ut labore et
-                                dolore magna aliqua. Ut enim ad minim venialo quis nostrud exercitation ullamco</p>
-                            <div class="pro-details-size-color">
-                                <div class="pro-details-color-wrap">
-                                    <span>Color</span>
-                                    <div class="pro-details-color-content">
-                                        <ul>
-                                            <li class="blue"></li>
-                                            <li class="maroon active"></li>
-                                        </ul>
+                            <p><%= product.shortDescription %></p>
+                            <form action="/add-to-cart" method="post">
+                                <div class="pro-details-quality">
+                                    <div class="cart-plus-minus">
+                                        <input class="cart-plus-minus-box" type="text" name="quantity" min="1" value="1" />
+                                    </div>
+                                    <div class="pro-details-cart btn-hover">
+                                        <input type="hidden" name="productId" value="<%= product._id %>">
+                                        <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                                        <button type="submit"> + Add To Cart</button>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="pro-details-quality">
-                                <div class="cart-plus-minus">
-                                    <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1" />
-                                </div>
-                                <div class="pro-details-cart btn-hover">
-                                    <a href="#"> + Add To Cart</a>
-                                </div>
-                            </div>
+                            </form>
                             <div class="pro-details-wish-com">
                                 <div class="pro-details-wishlist">
-                                    <a href="#" class='d-flex align-items-center'><ion-icon name="heart-outline" class='fs-5 me-1'></ion-icon>Add to wishlist</a>
+                                    <a href="#" class='d-flex align-items-center'>
+                                        <ion-icon name="heart-outline" class='fs-5 me-1'></ion-icon>
+                                        Add to wishlist
+                                    </a>
                                 </div>
                             </div>
                             <div class="pro-details-social-info">
