@@ -16,7 +16,7 @@ const userAuthRouter = require('./routes/userAuthRoutes');
 const adminAuthRouter = require('./routes/adminAuthRouter');
 const User = require('./models/UserModel');
 const { get404, getError } = require('./controller/errorController');
-const { isAuth } = require('./middleware/isAuth');
+const { isAuth, userIsAuth } = require('./middleware/isAuth');
 
 const csrfProtection = csrf({ cookie: true });
 // define storage path
@@ -90,6 +90,7 @@ app.use(async (req, res, next) => {
 });
 
 app.use((req, res, next) => {
+    res.locals.q = req.query.q;
     res.locals.user = req.user;
     res.locals.message = req.flash();
     res.locals._csrf = req.csrfToken();

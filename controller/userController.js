@@ -30,9 +30,6 @@ module.exports.postAddToCart = async (req, res, next) => {
     try {
         const { productId, quantity } = req.body;
 
-        if (!req.user) {
-            return res.redirect('/signin');
-        }
         req.user.addToCart(productId, +quantity || 1);
         return res.status(200).redirect(req.headers.referer);
     } catch (err) {

@@ -4665,7 +4665,7 @@ a.quick_view:hover {
     transform: translateY(0%);
 }
 
-.category-slider-2 .category-thumb {
+.category-thumb {
     position: relative;
     overflow: hidden;
     border: 1px solid #ebebeb;
@@ -4673,7 +4673,7 @@ a.quick_view:hover {
     margin-bottom: 20px;
 }
 
-.category-slider-2 .desc-listcategoreis .name_categories h4 {
+.desc-listcategoreis .name_categories h4 {
     color: #253237;
 }
 
@@ -6394,6 +6394,7 @@ a.read-more-btn i {
     display: -o-flex;
     display: flex;
     white-space: nowrap;
+    align-items: center;
 }
 
 .shop-tab.nav {}
@@ -6461,13 +6462,8 @@ a.read-more-btn i {
     float: left;
     color: #888;
     font-weight: 400;
-    text-transform: capitalize;
 }
 
-.shot-product {
-    flex: 0 0 20%;
-    max-width: 20%;
-}
 
 .shop-select {}
 

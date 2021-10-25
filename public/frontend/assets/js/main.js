@@ -144,9 +144,30 @@ $(document).ready(() => {
         }
     });
 
-    // handle search term
-    $('[name=searchTerm]').val(sessionStorage.getItem('searchTerm'));
-    $('[name=searchTerm]').on('keyup', function(e) {
-        sessionStorage.setItem('searchTerm', e.target.value);
+    // manage query parameter in url
+    // $('.add-url-query').click(function (e) {
+    //     e.preventDefault();
+
+    // })
+    $.each($('.add-url-query'), function() {
+        const parsedUrl = new URL(window.location.href);
+        const queryName = $(this).data('queryName');
+        const queryValue = $(this).data('queryValue');
+        if (parsedUrl.searchParams.get(queryName)?.includes(queryValue)) {
+            $(this).find('span').addClass('black');
+            return;
+        }
+        
+        const prevQueryValue = parsedUrl.searchParams.get(queryName);
+        const finalQueryValue = prevQueryValue ? `${prevQueryValue},${queryValue}` : queryValue;
+
+        parsedUrl.searchParams.set(queryName, finalQueryValue);
+        $(this).attr('href', parsedUrl.toString())
     })
+
+    // handle search term
+    // $('[name=q]').val(sessionStorage.getItem('searchTerm'));
+    // $('[name=q]').on('keyup', function(e) {
+    //     sessionStorage.setItem('searchTerm', e.target.value.trim());
+    // })
 })

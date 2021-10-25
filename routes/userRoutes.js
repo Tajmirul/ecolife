@@ -4,6 +4,7 @@ const {
     postAddToCart, postRemoveFromCart, postRateProduct,
     postAddToWishList, clearCart, postRemoveFromWishList,
 } = require('../controller/userController');
+const { userIsAuth } = require('../middleware/isAuth');
 
 const router = express.Router();
 
@@ -12,23 +13,23 @@ router.post('/rate-product', [
     body('rating').trim()
         .notEmpty().withMessage('Rating is empty'),
     body('description').trim(),
-], postRateProduct);
+], userIsAuth, postRateProduct);
 
 router.post('/add-to-cart', [
     body('productId').trim()
         .isEmpty().withMessage('Product id is not provided'),
     body('quantity').trim()
         .isLength({ min: 1 }).withMessage('Minimum quantity is 1'),
-], postAddToCart);
+], userIsAuth, postAddToCart);
 
 router.post('/remove-from-cart', [
     body('productId').trim()
         .isEmpty().withMessage('Product id is not provided'),
-], postRemoveFromCart);
+], userIsAuth, postRemoveFromCart);
 
-router.post('/clear-cart', clearCart);
+router.post('/clear-cart', userIsAuth, clearCart);
 
-router.post('/add-to-wishlist', postAddToWishList);
-router.post('/remove-from-wishlist', postRemoveFromWishList);
+router.post('/add-to-wishlist', userIsAuth, postAddToWishList);
+router.post('/remove-from-wishlist', userIsAuth, postRemoveFromWishList);
 
 module.exports = router;

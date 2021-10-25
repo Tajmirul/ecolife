@@ -304,6 +304,17 @@ a.quick_view:hover {
     border: none;
     background: transparent;
 }
+.button--icon {
+    --size: 30px;
+    width: var(--size);
+    height: var(--size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background-color: #CF292B;
+    color: #fff;
+}
 
 /* featured product */
 
@@ -389,6 +400,20 @@ a.quick_view:hover {
 }
 .not-found-box h4 {
     font-size: 22px;
+}
+
+.price-range-form {
+    display: flex
+}
+.price-range-form input {
+    width: 78px;
+    font-size: 13px;
+    border: 1px solid #c5c5c5;
+    padding: 0 10px;
+    border-radius: 5px;
+}
+.price-range-form button {
+    border-radius: 5px;
 }
 
 /* * responsive css */

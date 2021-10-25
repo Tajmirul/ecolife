@@ -16,3 +16,13 @@ module.exports.isAuth = (req, res, next) => {
 
     return next();
 };
+
+module.exports.userIsAuth = (req, res, next) => {
+    if (!req.user) {
+        return res.redirect('/signin');
+    }
+    if (!req.user?.emailVerified) {
+        return req.flash('warning', 'Please verify your email');
+    }
+    return next();
+};
