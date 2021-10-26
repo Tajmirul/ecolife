@@ -240,10 +240,10 @@ try {
                         },
                     }
                 },
-                'category': {
+                'categories': {
                     validators: {
                         notEmpty: {
-                            message: 'Category should not be empty'
+                            message: 'Select at least one category'
                         },
                     }
                 },
@@ -328,12 +328,14 @@ productAddForm?.addEventListener('submit', (e) => {
                 const title = e.target.title.value;
                 const price = e.target.price.value;
                 const discount = e.target.discount.value;
-                const category = e.target.category.value;
+                const categories = e.target.categories.value;
                 const tags = JSON.stringify(getValFromTagify(e.target.tags.value));
                 const flag = e.target.flag.value;
                 const image = e.target.image.files[0];
                 const shortDescription = e.target.shortDescription.value;
                 const description = e.target.description.value;
+
+                console.log(categories);
 
                 // submit form via api
                 const formData = new FormData();
@@ -341,7 +343,7 @@ productAddForm?.addEventListener('submit', (e) => {
                 formData.append('title', title);
                 formData.append('price', price);
                 formData.append('discount', discount);
-                formData.append('category', category);
+                formData.append('categories', categories);
                 formData.append('tags', tags);
                 formData.append('flag', flag);
                 formData.append('shortDescription', shortDescription);
@@ -373,7 +375,7 @@ productAddForm?.addEventListener('submit', (e) => {
                                     e.target.reset();
                                 }
                             });
-                        window.location.replace(`/${ADMIN_PANEL_PATH}/product`);
+                        // window.location.replace(`/${ADMIN_PANEL_PATH}/product`);
                     })
                     .catch(err => {
                         Swal.fire({

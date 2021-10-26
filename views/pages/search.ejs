@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="breadcrumb-content">
-                    <h1 class="breadcrumb-hrading"><%= q %></h1>
+                    <h1 class="breadcrumb-hrading"><%= data.filterQuery.q %></h1>
                     <ul class="breadcrumb-links">
                         <li><a href="/">Home</a></li>
                         <li>Search</li>
@@ -88,35 +88,14 @@
                             </div>
                         </div>
                         <!-- Sidebar single item -->
-                        <!-- Sidebar single item -->
-                        <div class="sidebar-widget mt-30">
-                            <h4 class="pro-sidebar-title">Brand</h4>
-                            <div class="sidebar-widget-list">
-                                <ul>
-                                    <li>
-                                        <div class="sidebar-widget-list-left">
-                                            <input type="checkbox" /> <a href="#">Studio Design<span>(10)</span> </a>
-                                            <span class="checkmark"></span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="sidebar-widget-list-left">
-                                            <input type="checkbox" value="" /> <a href="#">Graphic Corner<span>(7)</span></a>
-                                            <span class="checkmark"></span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <!-- Sidebar single item -->
                     </div>
                     <!-- Sidebar single item -->
                     <div class="sidebar-widget mt-20">
-                        <h4 class="pro-sidebar-title">Price</h4>
+                        <h4 class="pro-sidebar-title">Price Range</h4>
                         <div class="price-filter mt-10">
-                            <form action="" method="get" class="price-range-form">
-                                <input type="text" name="minPrice" placeholder="Min" value="<%= data.minPrice %>">
-                                <input type="text" name="maxPrice" placeholder="Max" value="<%= data.maxPrice %>" class="mx-1">
+                            <form class="price-range-form">
+                                <input type="number" name="min" placeholder="Min" value="<%= data.filterQuery.price.min %>">
+                                <input type="number" name="max" placeholder="Max" value="<%= data.filterQuery.price.max %>" class="mx-1">
                                 <button type="submit" class="button--icon"><i class="fas fa-play"></i></button>
                             </form>
                             <div id="slider-range"></div>
@@ -124,14 +103,13 @@
                     </div>
                     <div class="sidebar-widget tag mt-30">
                         <div class="main-heading">
-                            <h2>Tag</h2>
+                            <h2>Tags</h2>
                         </div>
                         <div class="sidebar-widget-tag">
                             <ul>
-                                <li><a href="#">Fresh Fruit</a></li>
-                                <li><a href="#"> Fresh Vegetables</a></li>
-                                <li><a href="#">Fresh Salad</a></li>
-                                <li><a href="#"> Butter & Eggs</a></li>
+                                <% data.filterQuery.foundTags.forEach(tag => { %>
+                                    <li><a href="" class="add-url-query" data-query-name="tag" data-query-value="<%= tag %>"><%= tag %></a></li>
+                                <% }) %>
                             </ul>
                         </div>
                     </div>

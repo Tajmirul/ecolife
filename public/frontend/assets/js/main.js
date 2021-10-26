@@ -106,9 +106,7 @@ $(document).ready(() => {
 
     $('#bar-rating').barrating({ theme: 'fontawesome-stars' });
 
-    $('input[type="number"]').niceNumber({
-        autoSizeBuffer: 10,
-    });
+    $('input[type="number"].nice-number').niceNumber({ autoSizeBuffer: 10 });
     // * plugin activation end =================
 
     const _csrfToken = $('meta[name=_csrf]').attr('content');
@@ -147,23 +145,37 @@ $(document).ready(() => {
     // manage query parameter in url
     // $('.add-url-query').click(function (e) {
     //     e.preventDefault();
-
     // })
-    $.each($('.add-url-query'), function() {
+
+    
+    $.each($('.add-url-query'), function () {
         const parsedUrl = new URL(window.location.href);
         const queryName = $(this).data('queryName');
         const queryValue = $(this).data('queryValue');
         if (parsedUrl.searchParams.get(queryName)?.includes(queryValue)) {
             $(this).find('span').addClass('black');
+            parsedUrl.searchParams.delete(queryName);
+            $(this).attr('href', parsedUrl.toString());
             return;
         }
-        
+
         const prevQueryValue = parsedUrl.searchParams.get(queryName);
         const finalQueryValue = prevQueryValue ? `${prevQueryValue},${queryValue}` : queryValue;
 
         parsedUrl.searchParams.set(queryName, finalQueryValue);
         $(this).attr('href', parsedUrl.toString())
-    })
+    });
+
+    // manage price range (filter)
+    $('.price-range-form').submit(function (e) {
+        e.preventDefault();
+
+        const parsedUrl = new URL(window.location.href);
+        const min = this.min.value;
+        const max = this.max.value;
+        parsedUrl.searchParams.set('price', `${min}-${max}`);
+        window.location.href = parsedUrl.toString();
+    });
 
     // handle search term
     // $('[name=q]').val(sessionStorage.getItem('searchTerm'));

@@ -82,7 +82,7 @@ module.exports.postSignIn = async (req, res, next) => {
         }
         req.session.isLoggedIn = true;
         req.session.user = user;
-        await req.session.save((err) => {
+        req.session.save((err) => {
             if (err) {
                 return console.log(err);
             }

@@ -4,7 +4,6 @@
         <div class="category-thumb img-block">
             <a href="<%= `/product/${product.slug}` %>">
                 <img src="<%= '/'+product.images[0].normal %>" alt="<%= product.shortDescription %>" height="260" width="230">
-                
             </a>
             <div class="quick-view">
                 <a class="quick_view" href="#" data-productId="<%= product._id %>">
@@ -18,7 +17,7 @@
             <% } %>
         </div>
         <div class="product-decs p-0">
-            <a class="inner-link" href="<%= `/category/${product.category}` %>"><span><%= product.category.name %></span></a>
+            <a class="inner-link" href="<%= `/category/${product.categories[0].slug}` %>"><span><%= product.categories[0].name %></span></a>
             <h2>
                 <a href="<%= `/product/${product.slug}` %>" class="product-link"><%= product.title.substring(0, 50) %></a>
             </h2>

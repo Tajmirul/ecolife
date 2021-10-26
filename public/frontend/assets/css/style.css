@@ -4285,7 +4285,7 @@ a.quick_view:hover {
     text-transform: uppercase;
     color: #999;
     line-height: 1;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
     display: block;
 }
 
@@ -4670,7 +4670,7 @@ a.quick_view:hover {
     overflow: hidden;
     border: 1px solid #ebebeb;
     border-radius: 5px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .desc-listcategoreis .name_categories h4 {
@@ -6278,7 +6278,7 @@ a.read-more-btn i {
 .sidebar-widget-tag li a {
     display: block;
     float: left;
-    padding: 10px 25px;
+    padding: 5px 15px;
     font-size: 14px;
     line-height: 20px;
     color: #555;

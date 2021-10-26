@@ -39,13 +39,13 @@ module.exports.postSignin = async (req, res, next) => {
         }
         req.session.isLoggedIn = true;
         req.session.user = user;
-        await req.session.save((err) => {
+        req.session.save((err) => {
             if (err) {
-                return console.log(err);
+                console.log(err);
+                return;
             }
-            return res.status(200).json({ message: 'sign in successful' });
+            res.status(200).json({ message: 'sign in successful' });
         });
-        return null;
     } catch (err) {
         next(err);
     }

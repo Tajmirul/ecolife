@@ -455,7 +455,7 @@ module.exports.postAddProduct = async (req, res, next) => {
 module.exports.getEditProduct = async (req, res, next) => {
     try {
         const { productId } = req.query;
-        const product = await Product.findById(productId).populate('category');
+        const product = await Product.findById(productId).populate('categories');
         if (!product) {
             return next();
         }
@@ -485,8 +485,9 @@ module.exports.postEditProduct = async (req, res, next) => {
         }
 
         const {
-            productId, title, price, discount, category, shortDescription, description, flag,
+            productId, title, price, discount, categories, shortDescription, description, flag,
         } = req.body;
+        console.log(categories);
         let tags;
         try {
             tags = JSON.parse(req.body.tags);
@@ -518,7 +519,7 @@ module.exports.postEditProduct = async (req, res, next) => {
         }
         if (price) product.price = price;
         if (discount) product.discount = discount;
-        if (category) product.category = category;
+        if (categories) product.categories = categories;
         if (tags) product.tags = tags;
         if (flag) product.flag = flag;
         if (shortDescription) product.shortDescription = shortDescription;

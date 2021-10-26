@@ -149,17 +149,10 @@ router.post('/product/edit', [
             }
             return true;
         }),
-    body('category')
-        .notEmpty().withMessage('Category is empty'),
+    body('categories')
+        .notEmpty().withMessage('No categories are selected'),
     body('tags').trim()
-        .notEmpty().withMessage('Please select at least one tag')
-        .custom((value) => {
-            console.log(value);
-            return true;
-        }),
-
-    // .isLength({ min: 50, max: 300 })
-    // .withMessage('50 < Short Description < 301')
+        .notEmpty().withMessage('Please select at least one tag'),
     body('shortDescription')
         .notEmpty()
         .withMessage('Short description should not be empty'),

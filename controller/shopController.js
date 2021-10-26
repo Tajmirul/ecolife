@@ -9,7 +9,7 @@ module.exports.getIndex = async (req, res, next) => {
         const ads = await Ad.find();
         const banners = await Banner.find().limit(4);
         const categories = await Category.find();
-        const products = await Product.find().populate('category');
+        const products = await Product.find().populate('categories');
 
         const bestSellingProducts = products.sort((a, b) => b.totalSale - a.totalSale);
         const featuredProducts = products.filter((product) => product.featured).slice(0, 5);
@@ -31,13 +31,33 @@ module.exports.getIndex = async (req, res, next) => {
 
 module.exports.search = async (req, res, next) => {
     try {
-        const { q, price } = req.query;
-        console.log(req.query);
+        const { q } = req.query;
+        const category = req.query.category?.split(',');
+        let price = req.query.price?.split('-');
+        price = { min: +price?.[0], max: +price?.[1] };
+
         if (!q?.trim().length) {
             return res.redirect('/');
         }
 
         const categories = await Category.find();
+
+        // filter queries
+        // let match = {};
+        // if (price?.min && price?.max) {
+        //     match = {
+        //         ...match,
+        //         price: { $gte: price.min, $lte: price.max },
+        //     };
+        // }
+        // if (category) {
+        //     match = {
+        //         ...match,
+        //         'categories.slug': {
+        //             $in: category?.split(','),
+        //         },
+        //     };
+        // }
 
         const agg = [
             {
@@ -50,7 +70,7 @@ module.exports.search = async (req, res, next) => {
                                     path: 'title',
                                     score: {
                                         boost: {
-                                            value: 5,
+                                            value: 2,
                                         },
                                     },
                                     fuzzy: {},
@@ -61,6 +81,17 @@ module.exports.search = async (req, res, next) => {
                                     path: ['shortDescription', 'description'],
                                     fuzzy: {},
                                 },
+                            }, {
+                                text: {
+                                    query: q,
+                                    path: 'tags',
+                                    score: {
+                                        boost: {
+                                            value: 5,
+                                        },
+                                    },
+                                    fuzzy: {},
+                                },
                             },
                         ],
                     },
@@ -68,33 +99,52 @@ module.exports.search = async (req, res, next) => {
             }, {
                 $lookup: {
                     from: 'categories',
-                    localField: 'category',
+                    localField: 'categories',
                     foreignField: '_id',
-                    as: 'category',
+                    as: 'categories',
                 },
             },
         ];
         const t0 = performance.now();
-        const products = await Product.aggregate(agg);
+        let products = await Product.aggregate(agg);
         const t1 = performance.now();
         const deference = (t1 - t0).toFixed(2);
-        const searchSpeed = `${products.length} product found in ${deference} ms`;
 
-        let foundAllCategories = products.map((product) => product.category[0]);
+        let foundTags = products.map((product) => product.tags);
+        foundTags = [...new Set(...foundTags)];
+
+        let foundAllCategories = products.map((product) => product.categories);
+        foundAllCategories = foundAllCategories.flat(Infinity);
         foundAllCategories = foundAllCategories.filter(
             (item, index, self) => index === self.findIndex(
                 (t) => (t._id.toString() === item._id.toString()),
             ),
         );
 
+        // filter out all products that do not match category
+        if (category) {
+            products = products.filter(
+                (product) => product.categories.find(
+                    (item) => category.find((cat) => item.slug === cat),
+                ),
+            );
+        }
+
+        // filter by price range
+        if (price.min && price.max) {
+            products = products.filter(
+                (product) => price.min <= product.price && product.price <= price.max,
+            );
+        }
+
+        const searchSpeed = `${products.length} product found in ${deference} ms`;
         return res.render('layouts/layout', {
             title: `Searching for '${q}' - Ecolife`,
             page: 'pages/search',
             path: '/search',
 
             data: {
-                q,
-                price,
+                filterQuery: { ...req.query, price, foundTags },
                 products,
                 categories,
                 foundAllCategories,
@@ -111,10 +161,10 @@ module.exports.getProduct = async (req, res, next) => {
         const { slug } = req.params;
 
         const categories = await Category.find();
-        const product = await Product.findOne({ slug }).populate('category').populate('reviews.userId');
+        const product = await Product.findOne({ slug }).populate('categories').populate('reviews.userId');
 
         res.render('layouts/layout', {
-            title: `${product.title} - ${product.category.name}`,
+            title: `${product.title} - ${product.categories[0].name}`,
             page: 'pages/product-details',
             path: '/product',
 
