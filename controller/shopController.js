@@ -29,6 +29,38 @@ module.exports.getIndex = async (req, res, next) => {
     }
 };
 
+module.exports.getSearchSuggestion = async (req, res, next) => {
+    try {
+        const { q } = req.query;
+        const agg = [
+            {
+                $search: {
+                    autocomplete: {
+                        query: q,
+                        path: 'title',
+                        fuzzy: {
+                            maxEdits: 2,
+                            prefixLength: 3,
+                        },
+                    },
+                },
+            }, {
+                $project: {
+                    _id: 0,
+                    title: 1,
+                },
+            }, {
+                $limit: 10,
+            },
+        ];
+
+        const searchSuggestions = await Product.aggregate(agg);
+        res.json(searchSuggestions);
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports.search = async (req, res, next) => {
     try {
         const { q } = req.query;
@@ -42,24 +74,7 @@ module.exports.search = async (req, res, next) => {
 
         const categories = await Category.find();
 
-        // filter queries
-        // let match = {};
-        // if (price?.min && price?.max) {
-        //     match = {
-        //         ...match,
-        //         price: { $gte: price.min, $lte: price.max },
-        //     };
-        // }
-        // if (category) {
-        //     match = {
-        //         ...match,
-        //         'categories.slug': {
-        //             $in: category?.split(','),
-        //         },
-        //     };
-        // }
-
-        const agg = [
+        const pipeline = [
             {
                 $search: {
                     compound: {
@@ -87,7 +102,7 @@ module.exports.search = async (req, res, next) => {
                                     path: 'tags',
                                     score: {
                                         boost: {
-                                            value: 5,
+                                            value: 2,
                                         },
                                     },
                                     fuzzy: {},
@@ -106,7 +121,7 @@ module.exports.search = async (req, res, next) => {
             },
         ];
         const t0 = performance.now();
-        let products = await Product.aggregate(agg);
+        let products = await Product.aggregate(pipeline);
         const t1 = performance.now();
         const deference = (t1 - t0).toFixed(2);
 

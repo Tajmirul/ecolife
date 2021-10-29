@@ -6,7 +6,7 @@
 5. product popup [done]
 6. heart icon in add to wishlist button in product details page [done]
 7. active heart icon if product is added to wishlist [done]
-8. search [running]
-9. multiple category [running]
-10. search suggestion
+8. search [done]
+9. multiple category [done]
+10. search suggestion [running]
 11. category
