@@ -1,6 +1,5 @@
 'use strict';
 
-
 // * utils function
 const getValFromTagify = (string) => {
     let json;
@@ -18,7 +17,6 @@ const getValFromTagify = (string) => {
     })
     return arr;
 }
-
 
 // * ========================================================
 // * edit / add banner form validation

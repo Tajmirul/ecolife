@@ -141,7 +141,7 @@
                                                 <div class="review-content">
                                                     <div class="mb-2">
                                                         <%- include('../includes/rating', {rating: review.rating, text: ''}) %> 
-                                                        <p style="font-size: 12px;color: #9b9b9b;">By <span style="text-transform: capitalize;"><%= review.userId.userName %></span></p>
+                                                        <p style="font-size: 12px;color: #9b9b9b;">By <span style="text-transform: capitalize;"><%= review.userId?.userName %></span></p>
                                                     </div>
     
                                                     <div class="review-bottom">

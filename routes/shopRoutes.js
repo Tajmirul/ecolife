@@ -1,5 +1,4 @@
 const express = require('express');
-const { body } = require('express-validator');
 const {
     getIndex, getProduct, getProductModal, search, getSearchSuggestion,
 } = require('../controller/shopController');

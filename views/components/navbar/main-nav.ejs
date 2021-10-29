@@ -18,7 +18,7 @@
                             <div class='open-dropdown' data-dropdown-open-on="focus">
                                 <button type="button"
                                     class='navbar-search__button navbar-search__button--hover dropdown-button me-3'
-                                    id="open-navbar-category" data-target="#navbar-category">
+                                    id="open-navbar-category">
                                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                             <rect x="0" y="0" width="24" height="24"/>
@@ -30,7 +30,14 @@
 
                                 <%- include('../search-categories', {categories: categories}) %> 
                             </div>
-                            <input placeholder="Search here ..." type="text" name="q" class='navbar-search__input' value="<%= q %>"/>
+                            <div class="open-dropdown" data-dropdown-open-on="focus">
+                                <input placeholder="Search here ..." type="text" name="q" id="search-box" class='navbar-search__input' value="<%= q %>" />
+
+                                <div class="dropdown-list w-100" tabindex="0">
+                                    <div class="search-suggestions d-none">
+                                    </div>
+                                </div>
+                            </div>
                             <button type="submit" class='navbar-search__button'>
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                     <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">

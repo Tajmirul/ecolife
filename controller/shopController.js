@@ -32,32 +32,49 @@ module.exports.getIndex = async (req, res, next) => {
 module.exports.getSearchSuggestion = async (req, res, next) => {
     try {
         const { q } = req.query;
+        if (!q) {
+            return res.send('');
+        }
+
         const agg = [
             {
                 $search: {
+                    index: 'search-suggestion',
                     autocomplete: {
                         query: q,
                         path: 'title',
                         fuzzy: {
-                            maxEdits: 2,
-                            prefixLength: 3,
+                            maxEdits: 1,
+                        },
+                        score: {
+                            function: {
+                                multiply: [
+                                    {
+                                        score: 'relevance',
+                                    }, {
+                                        path: {
+                                            value: 'rating',
+                                            undefined: 1,
+                                        },
+                                    },
+                                ],
+                            },
                         },
                     },
                 },
             }, {
                 $project: {
-                    _id: 0,
                     title: 1,
+                    slug: 1,
                 },
             }, {
                 $limit: 10,
             },
         ];
-
         const searchSuggestions = await Product.aggregate(agg);
-        res.json(searchSuggestions);
+        return res.status(200).json(searchSuggestions);
     } catch (err) {
-        next(err);
+        return next(err);
     }
 };
 
@@ -84,8 +101,17 @@ module.exports.search = async (req, res, next) => {
                                     query: q,
                                     path: 'title',
                                     score: {
-                                        boost: {
-                                            value: 2,
+                                        function: {
+                                            multiply: [
+                                                {
+                                                    score: 'relevance',
+                                                }, {
+                                                    path: {
+                                                        value: 'rating',
+                                                        undefined: 1,
+                                                    },
+                                                },
+                                            ],
                                         },
                                     },
                                     fuzzy: {},
@@ -93,8 +119,9 @@ module.exports.search = async (req, res, next) => {
                             }, {
                                 text: {
                                     query: q,
-                                    path: ['shortDescription', 'description'],
-                                    fuzzy: {},
+                                    path: [
+                                        'shortDescription', 'description',
+                                    ],
                                 },
                             }, {
                                 text: {
@@ -102,7 +129,7 @@ module.exports.search = async (req, res, next) => {
                                     path: 'tags',
                                     score: {
                                         boost: {
-                                            value: 2,
+                                            value: 1,
                                         },
                                     },
                                     fuzzy: {},
@@ -118,6 +145,8 @@ module.exports.search = async (req, res, next) => {
                     foreignField: '_id',
                     as: 'categories',
                 },
+            }, {
+                $limit: 20,
             },
         ];
         const t0 = performance.now();

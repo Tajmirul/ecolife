@@ -111,6 +111,37 @@ $(document).ready(() => {
 
     const _csrfToken = $('meta[name=_csrf]').attr('content');
 
+    // * auto search suggestion
+    $('#search-box').on('keyup', function () {
+        const q = this.value.trim();
+        const url = `/search-suggestion?q=${q}`;
+        const suggestionList = document.querySelector('.search-suggestions');
+        console.log(q.length)
+        if (q.length < 3) {
+            suggestionList.classList.add('d-none');
+            return;
+        }
+
+        fetch(url)
+            .then(res => {
+                return res.json();
+            }).then(result => {
+                $(suggestionList).empty();
+                if (result.length <= 0) {
+                    suggestionList.classList.add('d-none');
+                    return;
+                }
+
+                result.forEach(item => {
+                    suggestionList
+                    $(suggestionList).append(`<a href="/product/${item.slug}" class="suggestion">${item.title}</a>`)
+                });
+                suggestionList.classList.remove('d-none');
+            }).catch(err => {
+                console.log(err);
+            })
+    })
+
     // sticky menu
     $(window).scroll(function () {
         var window_top = $(window).scrollTop() + 1;
@@ -147,7 +178,7 @@ $(document).ready(() => {
     //     e.preventDefault();
     // })
 
-    
+
     $.each($('.add-url-query'), function () {
         const parsedUrl = new URL(window.location.href);
         const queryName = $(this).data('queryName');
