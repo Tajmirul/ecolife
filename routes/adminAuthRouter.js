@@ -1,6 +1,6 @@
 const express = require('express');
 const { body } = require('express-validator');
-const User = require('../models/UserModel');
+const User = require('../models/userModel');
 const {
     getSignin, postSignin, getSignup, postSignup, postLogout,
 } = require('../controller/adminAuthController');

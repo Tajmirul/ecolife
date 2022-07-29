@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const { errorValidation } = require('../utils/error-validation');
 const { throwError } = require('../utils/throwError');
-const User = require('../models/UserModel');
+const User = require('../models/userModel');
 
 module.exports.getSignin = async (req, res, next) => {
     try {

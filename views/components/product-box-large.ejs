@@ -5,30 +5,40 @@
     </ul>
     <div class="row">
         <div class="img-block col-12 col-sm-5">
-            <a href="single-product.html" class="thumbnail">
+            <a href="/product/<%= product.slug %>" class="thumbnail">
                 <img class="first-img" src="/<%= product.images[0].normal %>" alt="" />
                 <img class="second-img" src="/<%= product.images[1]?.normal %>" alt="" />
             </a>
             <ul class="add-to-link">
                 <li>
-                    <form action="">
+                    <form action="/add-to-cart" method="post">
                         <input type="hidden" name="_csrf" value="<%= _csrf %>">
-                        <a href="#" title="Add to Cart" class='add-to-link__item'>
+                        <input type="hidden" name="productId" value="<%= product._id %>">
+                        <button type="submit" title="Add to Cart" class='add-to-link__item'>
                             <ion-icon name="bag-add-outline"></ion-icon>
-                        </a>
+                        </button>
                     </form>
                 </li>
                 <li>
-                    <form action="">
+                    <% formUrl = '/add-to-wishlist' %>
+                    <% text = 'Add to Wishlist' %> 
+                    <% icon = 'heart-outline' %>
+                    <% if (user?.wishList?.includes(product._id.toString())) { %>
+                        <% formUrl = '/remove-from-wishlist' %>
+                        <% text = 'Remove from Wishlist' %>
+                        <% icon = 'heart' %>
+                    <% } %>
+
+                    <form action="<%= formUrl %>" method="post">
                         <input type="hidden" name="_csrf" value="<%= _csrf %>">
-                        <a href="wishlist.html" title="wishlist" class='add-to-link__item'>
+                        <input type="hidden" name="productId" value="<%= product._id %>">
+                        <button type="submit" title="wishlist" class='add-to-link__item'>
                             <ion-icon name="heart-outline"></ion-icon>
-                        </a>
+                        </button>
                     </form>
                 </li>
                 <li>
-                    <a href="#" class='add-to-link__item' data-link-action="quickview" title="Quick view"
-                        data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="eye-outline"></ion-icon></a>
+                    <a href="#" class='add-to-link__item product-quick-view' data-productId="<%= product._id %>"><ion-icon name="eye-outline"></ion-icon></a>
                 </li>
             </ul>
         </div>

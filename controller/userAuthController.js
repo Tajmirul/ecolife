@@ -2,48 +2,10 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
-const User = require('../models/UserModel');
+const User = require('../models/userModel');
 const { errorValidation } = require('../utils/error-validation');
 const { sendMail } = require('../utils/sendMail');
 const { throwError } = require('../utils/throwError');
-
-module.exports.getProfile = async (req, res, next) => {
-    try {
-        const { firstName, lastName } = req.user;
-        const categories = await Category.find();
-        return res.render('layouts/layout', {
-            title: `${firstName} ${lastName} - Profile`,
-            page: 'pages/profile',
-            path: '/profile',
-
-            data: { categories },
-        });
-    } catch (err) {
-        return next(err);
-    }
-};
-
-module.exports.postProfile = async (req, res, next) => {
-    try {
-        const {
-            firstName, lastName, email,
-        } = req.body;
-        const { user } = req;
-        if (firstName) user.firstName = firstName;
-        if (lastName) user.lastName = lastName;
-        if (email) user.email = email;
-        await user.save();
-        res.status(202).redirect('/profile');
-
-        sendMail({
-            to: 'doa2030n@gmail.com',
-            subject: 'Profile update',
-            text: 'Your profile is updated',
-        });
-    } catch (err) {
-        next(err);
-    }
-};
 
 module.exports.getSignIn = async (req, res, next) => {
     try {
@@ -133,7 +95,6 @@ module.exports.postSignUp = async (req, res, next) => {
         try {
             await user.save();
         } catch (err) {
-            console.log(err);
             throwError('Unable to create user', 500, false);
         }
 
@@ -149,15 +110,15 @@ module.exports.postSignUp = async (req, res, next) => {
 
         try {
             sendMail({
-                to: 'doa2030n@gmail.com',
+                to: email,
                 subject: 'Ecolife: Activate your account',
                 html: `
                     <p>Congratulations, You have successfully signed up in Ecolife</p>
                     <p>Please activate your account <a href="${process.env.SERVER_URL}/activate-email/${bufferText}">here</a></p>
                 `,
             });
+            console.log('email sent');
         } catch (err) {
-            // ! error notification
             console.log(err);
         }
     } catch (err) {

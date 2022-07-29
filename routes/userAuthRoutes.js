@@ -1,17 +1,13 @@
 const express = require('express');
 const { body } = require('express-validator');
-const User = require('../models/UserModel');
+const User = require('../models/userModel');
 const {
     getSignUp, postSignUp,
-    getSignIn, postSignIn, postSignOut,
-    getProfile, postProfile, activateEmail, activateEmailRequest,
+    getSignIn, postSignIn, postSignOut, activateEmail, activateEmailRequest,
 } = require('../controller/userAuthController');
 const { alreadyLoggedIn } = require('../middleware/alreadyLoggedIn');
 
 const router = express.Router();
-
-router.get('/profile', getProfile);
-router.post('/profile', postProfile);
 
 router.get('/signin', alreadyLoggedIn, getSignIn);
 router.post('/signin', [

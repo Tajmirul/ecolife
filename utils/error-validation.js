@@ -1,13 +1,11 @@
 const { validationResult } = require('express-validator');
+const { throwError } = require('../utils/throwError');
 
 module.exports.errorValidation = (req, isApi = true) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        const error = new Error(errors.array()[0].msg);
-        error.status = 422;
-        error.apiError = isApi;
-        throw error;
+    	throwError(errors.array()[0].msg, 422, isApi);
     }
 };
 

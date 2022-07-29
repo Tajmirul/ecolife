@@ -8,5 +8,7 @@
 7. active heart icon if product is added to wishlist [done]
 8. search [done]
 9. multiple category [done]
-10. search suggestion [running]
+10. search suggestion [done]
 11. category
+12. cart page
+13. checkout [running]

@@ -7,16 +7,15 @@ const multer = require('multer');
 const session = require('express-session');
 const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
-// const bodyParser = require('body-parser');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const userRouter = require('./routes/userRoutes');
 const adminRouter = require('./routes/adminRoutes');
 const shopRouter = require('./routes/shopRoutes');
 const userAuthRouter = require('./routes/userAuthRoutes');
 const adminAuthRouter = require('./routes/adminAuthRouter');
-const User = require('./models/UserModel');
+const User = require('./models/userModel');
 const { get404, getError } = require('./controller/errorController');
-const { isAuth, userIsAuth } = require('./middleware/isAuth');
+const { adminIsAuth } = require('./middleware/isAuth');
 
 const csrfProtection = csrf({ cookie: true });
 // define storage path
@@ -101,7 +100,7 @@ app.use(shopRouter);
 app.use(userRouter);
 app.use(userAuthRouter);
 app.use(`/${process.env.ADMIN_PANEL_PATH}/auth`, adminAuthRouter);
-app.use(`/${process.env.ADMIN_PANEL_PATH}`, isAuth, adminRouter);
+app.use(`/${process.env.ADMIN_PANEL_PATH}`, adminIsAuth, adminRouter);
 
 // route for 404 page
 app.use(get404);

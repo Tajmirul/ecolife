@@ -1,7 +1,50 @@
-const User = require('../models/UserModel');
+const Stripe = require('stripe');
+const Category = require('../models/categoryModel');
+const User = require('../models/userModel');
+const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
+const { sendMail } = require('../utils/sendMail');
 const { errorValidation } = require('../utils/error-validation');
 const { throwError } = require('../utils/throwError');
+
+module.exports.getProfile = async (req, res, next) => {
+    try {
+        const { firstName, lastName } = req.user;
+        console.log(req.user.cart);
+        const categories = await Category.find();
+        return res.render('layouts/layout', {
+            title: `${firstName} ${lastName} - Profile`,
+            page: 'pages/profile',
+            path: '/profile',
+
+            data: { categories },
+        });
+    } catch (err) {
+        return next(err);
+    }
+};
+
+module.exports.postProfile = async (req, res, next) => {
+    try {
+        const {
+            firstName, lastName, email,
+        } = req.body;
+        const { user } = req;
+        if (firstName) user.firstName = firstName;
+        if (lastName) user.lastName = lastName;
+        if (email) user.email = email;
+        await user.save();
+        res.status(202).redirect('/profile');
+
+        sendMail({
+            to: 'doa2030n@gmail.com',
+            subject: 'Profile update',
+            text: 'Your profile is updated',
+        });
+    } catch (err) {
+        next(err);
+    }
+};
 
 module.exports.postRateProduct = async (req, res, next) => {
     try {
@@ -11,7 +54,7 @@ module.exports.postRateProduct = async (req, res, next) => {
         const product = await Product.findById(productId);
         if (!product) {
             req.flash('error', 'Product Not found');
-            return next();
+            return res.redirect('/');
         }
         try {
             await product.addReview({ userId: req.user._id, rating, description });
@@ -85,5 +128,102 @@ module.exports.postRemoveFromWishList = async (req, res, next) => {
         res.redirect(req.headers.referer);
     } catch (err) {
         next(err);
+    }
+};
+
+module.exports.getCheckout = async (req, res, next) => {
+    try {
+        const categories = await Category.find();
+
+        res.render('layouts/layout', {
+            title: 'Checkout',
+            page: 'pages/checkout',
+            path: '/',
+
+            data: { categories },
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports.postCheckout = async (req, res, next) => {
+    try {
+        errorValidation(req, false);
+        const { user } = req;
+        req.session.paymentAddress = req.body;
+        const cartProduct = await user.getCartProducts();
+        const stripe = Stripe(process.env.STRIPE_PRIVATE_KEY);
+
+        const products = cartProduct.map((product) => (
+            {
+                name: product.title,
+                amount: Math.round((product.price) * 100),
+                quantity: product.quantity,
+                currency: 'bdt',
+                // payment_method_types: ['card'],
+            }
+        ));
+        const session = await stripe.checkout.sessions.create({
+            line_items: products,
+            payment_method_types: ['card'],
+            mode: 'payment',
+            success_url: `${process.env.SERVER_URL}/checkout-complete`,
+            cancel_url: `${process.env.SERVER_URL}/checkout`,
+        });
+
+        res.redirect(session.url);
+    } catch (err) {
+        next(err);
+    }
+};
+
+module.exports.getCheckoutComplete = async (req, res, next) => {
+    try {
+        errorValidation(req, false);
+        const {
+            name, email, phone,
+            division, district,
+            upazilla, address,
+        } = req.session.paymentAddress;
+        const { user } = req;
+
+        const cartProduct = await user.getCartProducts();
+        const order = new Order({
+            userId: user._id,
+            name,
+            email,
+            phone,
+            division,
+            district,
+            upazilla,
+            address,
+            products: cartProduct,
+            total: user.cart.total,
+        });
+        try {
+            await order.save();
+        } catch (err) {
+            console.log(err);
+            req.flash('error', 'Unable to save order');
+            return res.redirect('/checkout');
+        }
+
+        // update the product collection that products have been selled
+        // const products = await Product.updateMany(
+        //     { _id: {
+        //         $includes: cartProduct.map(item => item._id)
+        //     } },
+        //     {},
+        //     {}
+        // );
+        // console.log(products);
+
+        user.clearCart();
+        req.flash('success', 'Order placed successfully');
+        // return res.redirect('/');
+        return res.send('ok');
+    } catch (err) {
+        return next();
     }
 };

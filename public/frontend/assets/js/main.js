@@ -153,7 +153,7 @@ $(document).ready(() => {
     });
 
     let productModal;
-    $('.quick_view').on('click', async function (e) {
+    $('.product-quick-view').on('click', async function (e) {
         e.preventDefault();
 
         const productId = $(this).data('productid');
@@ -179,6 +179,7 @@ $(document).ready(() => {
     // })
 
 
+    // manage filter in search
     $.each($('.add-url-query'), function () {
         const parsedUrl = new URL(window.location.href);
         const queryName = $(this).data('queryName');
@@ -208,9 +209,49 @@ $(document).ready(() => {
         window.location.href = parsedUrl.toString();
     });
 
-    // handle search term
-    // $('[name=q]').val(sessionStorage.getItem('searchTerm'));
-    // $('[name=q]').on('keyup', function(e) {
-    //     sessionStorage.setItem('searchTerm', e.target.value.trim());
-    // })
-})
+    // user address address
+    const baseAddressUrl = 'https://bdapis.herokuapp.com/api/v1.1';
+    request(`${baseAddressUrl}/divisions`, 'GET').then(result => {
+        const divisionList = result.data;
+        divisionList.forEach(item => {
+            $('.division-list').append(`<option value="${item._id}">${item.division}</option>`);
+        });
+    });
+
+    let districtList;
+    $('.division-list').on('change', function() {
+        const divisionId = this.value;
+        request(`${baseAddressUrl}/division/${divisionId}`, 'GET').then(result => {
+            districtList = result.data;
+        
+            $('.district-list').empty();
+            districtList.forEach(item => {
+                $('.district-list').append(`<option value="${item._id}">${item.district}</option>`);
+            });
+
+            
+        });
+    });
+
+    $('.district-list').on('change', function() {
+        const districtId = this.value;
+        const district = districtList.find(item => item._id === districtId);
+
+        $('.upazilla-list').empty();
+        district?.upazilla.forEach(item => {
+            $('.upazilla-list').append(`<option value="${item}">${item}</option>`);
+        });
+    })
+});
+
+const request = (url, method, data) => {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: url,
+            method: method,
+            data: data,
+            success: resolve,
+            error: reject
+        });
+    })
+}

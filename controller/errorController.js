@@ -12,17 +12,11 @@ module.exports.getError = (error, req, res, next) => {
     }
 
     if (error.apiError) {
-        return res.status(error.status || 500).json({ message: error.message });
+        return res.status(error.status || 500).json({ message: error.msg });
     }
 
-    req.flash('error', error.message);
+    req.flash('error', error.msg);
     return res.status(error.status || 500).redirect(req.headers.referer || req.originalUrl);
-
-    // return res.status(error.status || 500).render('admin/layouts/layout-small', {
-    //     title: 'Something went wrong',
-    //     page: 'pages/errors/error',
-    //     path: '',
-    // });
 };
 
 module.exports.get404 = (req, res, next) => {

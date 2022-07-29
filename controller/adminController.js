@@ -5,7 +5,7 @@ const { checkFileExt } = require('../utils/checkFileExt');
 // models
 const Banner = require('../models/bannerModel');
 const Product = require('../models/productModel');
-const User = require('../models/UserModel');
+const User = require('../models/userModel');
 const Category = require('../models/categoryModel');
 const Ad = require('../models/adModel');
 const Tag = require('../models/tagModel');

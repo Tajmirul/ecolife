@@ -1,9 +1,9 @@
-const User = require('../models/UserModel');
+const User = require('../models/userModel');
 
 // check if the uses is already logged in
 // if user is not authorized redirect login page
 
-module.exports.isAuth = (req, res, next) => {
+module.exports.adminIsAuth = (req, res, next) => {
     const { user } = req;
     if (!user) {
         return res.redirect(`/${process.env.ADMIN_PANEL_PATH}/auth/signin`);

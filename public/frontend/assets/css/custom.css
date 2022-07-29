@@ -357,6 +357,8 @@ a.quick_view:hover {
     align-items: center;
     justify-content: center;
     font-size: 18px;
+    border: none;
+    background: none;
 }
 
 .featured-product .add-to-link__item:hover {

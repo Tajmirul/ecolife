@@ -14,7 +14,7 @@
                 <div class="header-right-nav">
                     <ul class="res-xs-flex">
                         <li class="after-n">
-                            <a href="/wishlist" class='d-flex align-items-center'><ion-icon name="heart" class="fs-5 me-1"></ion-icon>Wishlist (0)</a>
+                            <a href="/wishlist" class='d-flex align-items-center'><ion-icon name="heart" class="fs-5 me-1"></ion-icon>Wishlist (<%= user?.wishList?.length || 0 %>)</a>
                         </li>
                         <li>
                             <% if (user) { %>

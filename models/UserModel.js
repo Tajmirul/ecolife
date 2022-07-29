@@ -55,6 +55,22 @@ userSchema.methods.addToCart = function (productId, quantity = 1) {
     return this.save();
 };
 
+userSchema.methods.getCartProducts = async function () {
+    const products = [];
+    await this.populate('cart.items.productId');
+    this.cart.items.forEach((item) => {
+        const product = item.productId;
+        products.push({
+            id: product.id,
+            title: product.title,
+            quantity: item.quantity,
+            price: product.price - product.price * (product.discount / 100),
+            discount: product.discount,
+        });
+    });
+    return products;
+};
+
 userSchema.methods.removeFromCart = function async(productId) {
     const updatedCartItems = this.cart.items;
     const productIndex = updatedCartItems.findIndex(
