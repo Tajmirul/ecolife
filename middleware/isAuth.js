@@ -1,5 +1,3 @@
-const User = require('../models/userModel');
-
 // check if the uses is already logged in
 // if user is not authorized redirect login page
 
