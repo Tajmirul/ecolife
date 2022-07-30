@@ -1,6 +1,5 @@
 const Stripe = require('stripe');
 const Category = require('../models/categoryModel');
-const User = require('../models/userModel');
 const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 const { sendMail } = require('../utils/sendMail');
@@ -10,7 +9,6 @@ const { throwError } = require('../utils/throwError');
 module.exports.getProfile = async (req, res, next) => {
     try {
         const { firstName, lastName } = req.user;
-        console.log(req.user.cart);
         const categories = await Category.find();
         return res.render('layouts/layout', {
             title: `${firstName} ${lastName} - Profile`,
