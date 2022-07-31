@@ -11,4 +11,6 @@
 10. search suggestion [done]
 11. category
 12. cart page
-13. checkout [running]
+13. checkout [done]
+14. product review
+15. product details page design
